@@ -2,7 +2,7 @@ export type NavItem = {
   href: string;
   label: string;
   icon: string; // lucide icon name
-  badge?: number;
+  badgeKey?: "requests";
 };
 
 export type NavSection = {
@@ -16,7 +16,8 @@ export const navSections: NavSection[] = [
     items: [
       { href: "/", label: "ダッシュボード", icon: "LayoutDashboard" },
       { href: "/attendance", label: "勤怠一覧", icon: "CalendarClock" },
-      { href: "/requests", label: "申請・承認", icon: "FileCheck2", badge: 3 },
+      { href: "/requests", label: "申請・承認", icon: "FileCheck2", badgeKey: "requests" },
+      { href: "/leave", label: "休暇管理", icon: "Palmtree" },
       { href: "/shifts", label: "シフト管理", icon: "CalendarDays" },
     ],
   },

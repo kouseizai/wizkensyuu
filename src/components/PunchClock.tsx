@@ -1,88 +1,82 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import {
   LogIn,
   LogOut,
   Coffee,
   Play,
   MapPin,
-  Clock,
   CheckCircle2,
+  Globe,
 } from "lucide-react";
+import { useStore, derivePunch, type PunchType } from "@/lib/store";
+import { useToast } from "@/components/Overlay";
 import { formatClock, formatDateJP, minutesToHM } from "@/lib/utils";
 
-type PunchState = "before" | "working" | "break" | "done";
+const statusMeta: Record<
+  string,
+  { text: string; chip: string; dot: string }
+> = {
+  before: { text: "未出勤", chip: "bg-white/15 text-white", dot: "bg-white/60" },
+  working: { text: "勤務中", chip: "bg-emerald-400/25 text-emerald-50", dot: "bg-emerald-300" },
+  break: { text: "休憩中", chip: "bg-amber-400/25 text-amber-50", dot: "bg-amber-300" },
+  done: { text: "退勤済", chip: "bg-sky-400/25 text-sky-50", dot: "bg-sky-200" },
+};
 
-type Stamp = { in?: string; out?: string; breaks: { start: string; end?: string }[] };
-
-const labelMap: Record<PunchState, { text: string; tone: string; dot: string }> = {
-  before: { text: "未出勤", tone: "text-slate-500 bg-slate-100", dot: "bg-slate-400" },
-  working: { text: "勤務中", tone: "text-[var(--color-success)] bg-[var(--color-success-soft)]", dot: "bg-[var(--color-success)]" },
-  break: { text: "休憩中", tone: "text-[var(--color-warning)] bg-[var(--color-warning-soft)]", dot: "bg-[var(--color-warning)]" },
-  done: { text: "退勤済", tone: "text-[var(--color-primary)] bg-[var(--color-primary-soft)]", dot: "bg-[var(--color-primary)]" },
+const eventLabel: Record<PunchType, string> = {
+  clock_in: "出勤",
+  clock_out: "退勤",
+  break_start: "休憩開始",
+  break_end: "休憩終了",
 };
 
 export default function PunchClock() {
+  const { punches, addPunch, hydrated } = useStore();
+  const { toast } = useToast();
   const [now, setNow] = useState<Date | null>(null);
-  const [state, setState] = useState<PunchState>("before");
-  const [stamp, setStamp] = useState<Stamp>({ breaks: [] });
-  const breakAccum = useRef(0);
 
   useEffect(() => {
-    const tick = () => setNow(new Date());
-    tick();
-    const id = setInterval(tick, 1000);
+    const t = () => setNow(new Date());
+    t();
+    const id = setInterval(t, 1000);
     return () => clearInterval(id);
   }, []);
 
-  const hhmm = (d: Date) =>
-    `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  const { status, clockIn, clockOut, breakMin } = derivePunch(punches);
+  const meta = statusMeta[status];
 
-  const clockIn = () => {
-    if (!now) return;
-    setStamp((s) => ({ ...s, in: hhmm(now) }));
-    setState("working");
-  };
-  const startBreak = () => {
-    if (!now) return;
-    setStamp((s) => ({ ...s, breaks: [...s.breaks, { start: hhmm(now) }] }));
-    setState("break");
-  };
-  const endBreak = () => {
-    if (!now) return;
-    setStamp((s) => {
-      const breaks = [...s.breaks];
-      const last = breaks[breaks.length - 1];
-      if (last && !last.end) {
-        last.end = hhmm(now);
-        breakAccum.current += diffMin(last.start, last.end);
-      }
-      return { ...s, breaks };
-    });
-    setState("working");
-  };
-  const clockOut = () => {
-    if (!now) return;
-    setStamp((s) => ({ ...s, out: hhmm(now) }));
-    setState("done");
-  };
-
-  const meta = labelMap[state];
   const elapsed =
-    stamp.in && now
-      ? diffMin(stamp.in, hhmm(now)) - breakAccum.current
+    clockIn && now
+      ? Math.max(
+          0,
+          now.getHours() * 60 +
+            now.getMinutes() -
+            (Number(clockIn.split(":")[0]) * 60 + Number(clockIn.split(":")[1])) -
+            breakMin
+        )
       : 0;
 
+  const punch = (type: PunchType) => {
+    addPunch(type);
+    toast({
+      kind: "success",
+      title: `${eventLabel[type]}を記録しました`,
+      desc: now ? formatClock(now).slice(0, 5) : undefined,
+    });
+  };
+
   return (
-    <div className="rounded-2xl border bg-gradient-to-br from-[#1e3a8a] via-[#2563eb] to-[#3b82f6] p-6 text-white shadow-[0_18px_40px_-18px_rgba(37,99,235,0.7)]">
+    <div className="overflow-hidden rounded-[var(--radius-2xl)] bg-gradient-to-br from-[#0a2a6e] via-[var(--blue)] to-[#3b82f6] p-6 text-white shadow-[0_20px_48px_-20px_rgba(0,113,227,0.7)]">
       <div className="flex items-center justify-between">
-        <span
-          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${meta.tone}`}
+        <motion.span
+          layout
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold backdrop-blur ${meta.chip}`}
         >
-          <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
+          <span className={`h-1.5 w-1.5 rounded-full ${meta.dot} ${status === "working" ? "animate-pulse" : ""}`} />
           {meta.text}
-        </span>
+        </motion.span>
         <span className="flex items-center gap-1.5 text-xs text-white/70">
           <MapPin size={13} /> 本社オフィス
         </span>
@@ -92,66 +86,101 @@ export default function PunchClock() {
         <p className="text-sm font-medium text-white/80">
           {now ? formatDateJP(now) : "—"}
         </p>
-        <p className="mt-1 font-mono text-5xl font-bold tabular-nums tracking-tight sm:text-6xl">
+        <p className="mt-1 font-mono text-5xl font-bold tabular-nums tracking-tight sm:text-[3.4rem]">
           {now ? formatClock(now) : "--:--:--"}
         </p>
-        {state === "working" && (
-          <p className="mt-2 text-sm text-white/80">
-            実労働 {minutesToHM(Math.max(0, elapsed))}
-          </p>
-        )}
-        {state === "done" && (
-          <p className="mt-2 inline-flex items-center gap-1.5 text-sm text-white/90">
-            <CheckCircle2 size={15} /> 本日の勤務を記録しました
-          </p>
-        )}
+        <AnimatePresence mode="wait">
+          {status === "working" && (
+            <motion.p
+              key="elapsed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-2 text-sm text-white/85"
+            >
+              実労働 {minutesToHM(elapsed)}
+            </motion.p>
+          )}
+          {status === "done" && (
+            <motion.p
+              key="done"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-2 inline-flex items-center gap-1.5 text-sm text-white/90"
+            >
+              <CheckCircle2 size={15} /> 本日の勤務を記録しました
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-3">
-        {(state === "before" || state === "done") && (
-          <button
-            onClick={clockIn}
-            disabled={state === "done"}
-            className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-white py-4 text-base font-bold text-[var(--color-primary)] shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+        {(status === "before" || status === "done") && (
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => punch("clock_in")}
+            disabled={status === "done" || !hydrated}
+            className="col-span-2 flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-base font-bold text-[var(--blue)] shadow-sm transition-transform disabled:cursor-not-allowed disabled:opacity-50"
           >
             <LogIn size={20} /> 出勤
-          </button>
+          </motion.button>
         )}
-        {state === "working" && (
+        {status === "working" && (
           <>
-            <button
-              onClick={startBreak}
-              className="flex items-center justify-center gap-2 rounded-xl bg-white/15 py-4 text-base font-bold backdrop-blur transition-colors hover:bg-white/25"
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => punch("break_start")}
+              className="flex items-center justify-center gap-2 rounded-2xl bg-white/15 py-4 text-base font-bold backdrop-blur transition-colors hover:bg-white/25"
             >
               <Coffee size={19} /> 休憩
-            </button>
-            <button
-              onClick={clockOut}
-              className="flex items-center justify-center gap-2 rounded-xl bg-white py-4 text-base font-bold text-[var(--color-primary)] transition-transform hover:scale-[1.01] active:scale-[0.99]"
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => punch("clock_out")}
+              className="flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-base font-bold text-[var(--blue)]"
             >
               <LogOut size={19} /> 退勤
-            </button>
+            </motion.button>
           </>
         )}
-        {state === "break" && (
-          <button
-            onClick={endBreak}
-            className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-white py-4 text-base font-bold text-[var(--color-warning)] transition-transform hover:scale-[1.01] active:scale-[0.99]"
+        {status === "break" && (
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => punch("break_end")}
+            className="col-span-2 flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-base font-bold text-[var(--orange)]"
           >
             <Play size={19} /> 休憩終了・業務再開
-          </button>
+          </motion.button>
         )}
       </div>
 
       <div className="mt-5 grid grid-cols-3 gap-2 border-t border-white/15 pt-4 text-center">
-        <Stat icon={<LogIn size={14} />} label="出勤" value={stamp.in ?? "--:--"} />
+        <Stat icon={<LogIn size={13} />} label="出勤" value={clockIn ?? "--:--"} />
         <Stat
-          icon={<Coffee size={14} />}
+          icon={<Coffee size={13} />}
           label="休憩"
-          value={breakAccum.current > 0 ? minutesToHM(breakAccum.current) : "--"}
+          value={breakMin > 0 ? minutesToHM(breakMin) : "--"}
         />
-        <Stat icon={<LogOut size={14} />} label="退勤" value={stamp.out ?? "--:--"} />
+        <Stat icon={<LogOut size={13} />} label="退勤" value={clockOut ?? "--:--"} />
       </div>
+
+      {/* today's timeline */}
+      {punches.length > 0 && (
+        <div className="mt-4 space-y-1.5 border-t border-white/15 pt-4">
+          <p className="flex items-center gap-1.5 text-[11px] text-white/60">
+            <Globe size={12} /> 本日の打刻履歴
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {punches.map((p) => (
+              <span
+                key={p.id}
+                className="rounded-lg bg-white/10 px-2 py-1 font-mono text-[11px] tabular-nums backdrop-blur"
+              >
+                {eventLabel[p.type]} {p.time}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -175,11 +204,3 @@ function Stat({
     </div>
   );
 }
-
-function diffMin(a: string, b: string): number {
-  const [ah, am] = a.split(":").map(Number);
-  const [bh, bm] = b.split(":").map(Number);
-  return bh * 60 + bm - (ah * 60 + am);
-}
-
-export { Clock };

@@ -1,3 +1,6 @@
+"use client";
+
+import Link from "next/link";
 import {
   CalendarCheck,
   Clock,
@@ -11,190 +14,137 @@ import {
   FileCheck2,
 } from "lucide-react";
 import PunchClock from "@/components/PunchClock";
-import { Card, CardHeader, Badge } from "@/components/ui";
-import {
-  buildMonthlyAttendance,
-  summarize,
-  members,
-  leaveRequests,
-} from "@/lib/mock-data";
+import { Card, CardHeader, Badge, Avatar, Ring, type Tone } from "@/components/ui";
+import { useStore } from "@/lib/store";
+import { summarize } from "@/lib/mock-data";
 import { minutesToHM } from "@/lib/utils";
 
-const records = buildMonthlyAttendance();
-const sum = summarize(records);
-
-const statusTone: Record<string, "success" | "warning" | "primary" | "neutral"> = {
-  出勤中: "success",
-  休憩中: "warning",
-  退勤済: "primary",
-  休暇: "neutral",
+const statusTone: Record<string, Tone> = {
+  出勤中: "green",
+  休憩中: "orange",
+  退勤済: "blue",
+  休暇: "purple",
   未出勤: "neutral",
 };
 
 const activity = [
-  { icon: LogIn, name: "佐藤 花子", action: "出勤しました", time: "09:02", tone: "text-[var(--color-success)]" },
-  { icon: Coffee, name: "鈴木 一郎", action: "休憩を開始しました", time: "12:15", tone: "text-[var(--color-warning)]" },
-  { icon: FileCheck2, name: "渡辺 翔", action: "有給休暇を申請しました", time: "14:32", tone: "text-[var(--color-primary)]" },
-  { icon: LogOut, name: "田中 健", action: "退勤しました", time: "18:48", tone: "text-[var(--color-primary)]" },
-  { icon: LogIn, name: "中村 由美", action: "出勤しました", time: "08:51", tone: "text-[var(--color-success)]" },
+  { icon: LogIn, name: "佐藤 花子", action: "出勤しました", time: "09:02", tone: "var(--green)" },
+  { icon: Coffee, name: "鈴木 一郎", action: "休憩を開始しました", time: "12:15", tone: "var(--orange)" },
+  { icon: FileCheck2, name: "渡辺 翔", action: "有給休暇を申請しました", time: "14:32", tone: "var(--blue)" },
+  { icon: LogOut, name: "田中 健", action: "退勤しました", time: "18:48", tone: "var(--blue)" },
+  { icon: LogIn, name: "中村 由美", action: "出勤しました", time: "08:51", tone: "var(--green)" },
 ];
 
 export default function DashboardPage() {
-  const monthTarget = 22 * 8 * 60; // 22営業日 × 8h
+  const { records, members, requests } = useStore();
+  const sum = summarize(records);
+
+  const monthTarget = 22 * 8 * 60;
   const progress = Math.min(100, Math.round((sum.totalWork / monthTarget) * 100));
   const working = members.filter((m) => m.status === "出勤中").length;
   const onBreak = members.filter((m) => m.status === "休憩中").length;
-  const pending = leaveRequests.filter((r) => r.status === "承認待ち").length;
+  const pending = requests.filter((r) => r.status === "承認待ち").length;
 
   const stats = [
-    {
-      icon: CalendarCheck,
-      label: "今月の出勤日数",
-      value: `${sum.workDays}`,
-      unit: "日",
-      sub: "予定 22日",
-      tone: "primary" as const,
-    },
-    {
-      icon: Clock,
-      label: "今月の総労働時間",
-      value: minutesToHM(sum.totalWork).replace("時間", "").split("分")[0],
-      unit: "時間",
-      sub: `残業 ${minutesToHM(sum.overtime)}`,
-      tone: "info" as const,
-    },
-    {
-      icon: TrendingUp,
-      label: "残業時間",
-      value: `${Math.floor(sum.overtime / 60)}`,
-      unit: "時間",
-      sub: "上限 45時間/月",
-      tone: "warning" as const,
-    },
-    {
-      icon: CalendarDays,
-      label: "有給休暇 残日数",
-      value: "12.5",
-      unit: "日",
-      sub: "付与 20日",
-      tone: "success" as const,
-    },
-  ];
+    { icon: CalendarCheck, label: "今月の出勤日数", value: `${sum.workDays}`, unit: "日", sub: "予定 22日", tone: "blue" },
+    { icon: Clock, label: "今月の総労働時間", value: `${Math.floor(sum.totalWork / 60)}`, unit: "時間", sub: `残業 ${minutesToHM(sum.overtime)}`, tone: "teal" },
+    { icon: TrendingUp, label: "残業時間", value: `${Math.floor(sum.overtime / 60)}`, unit: "時間", sub: "上限 45時間/月", tone: "orange" },
+    { icon: CalendarDays, label: "有給休暇 残日数", value: "12.5", unit: "日", sub: "付与 20日", tone: "green" },
+  ] as const;
 
   const toneBg: Record<string, string> = {
-    primary: "bg-[var(--color-primary-soft)] text-[var(--color-primary)]",
-    info: "bg-[var(--color-info-soft)] text-[var(--color-info)]",
-    warning: "bg-[var(--color-warning-soft)] text-[var(--color-warning)]",
-    success: "bg-[var(--color-success-soft)] text-[var(--color-success)]",
+    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
+    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
+    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
+    green: "bg-[var(--green-soft)] text-[var(--green)]",
   };
 
   return (
     <div className="space-y-6">
-      {/* greeting */}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm text-[var(--color-text-muted)]">
+          <p className="text-sm text-[var(--text-secondary)]">
             こんにちは、山田 太郎さん 👋
           </p>
-          <p className="text-xl font-bold">本日も一日よろしくお願いします</p>
+          <p className="text-xl font-bold tracking-tight">
+            本日も一日よろしくお願いします
+          </p>
         </div>
-        <Badge tone="warning" className="gap-2">
+        <Badge tone="orange" className="gap-2">
           <AlertTriangle size={14} />
-          未退勤の打刻があります
+          5/19 の退勤打刻が未入力です
         </Badge>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* punch clock */}
         <div className="lg:col-span-1">
           <PunchClock />
         </div>
 
-        {/* stat cards + progress */}
         <div className="space-y-6 lg:col-span-2">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {stats.map((s) => (
-              <Card key={s.label} className="p-4">
+            {stats.map((s, i) => (
+              <Card key={s.label} className="p-4" delay={i * 0.05} hover>
                 <div
                   className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${toneBg[s.tone]}`}
                 >
                   <s.icon size={20} />
                 </div>
-                <p className="text-xs text-[var(--color-text-muted)]">
-                  {s.label}
-                </p>
+                <p className="text-xs text-[var(--text-secondary)]">{s.label}</p>
                 <p className="mt-1 flex items-baseline gap-1">
-                  <span className="text-2xl font-bold tabular-nums">
-                    {s.value}
-                  </span>
-                  <span className="text-sm text-[var(--color-text-muted)]">
-                    {s.unit}
-                  </span>
+                  <span className="text-2xl font-bold tabular-nums">{s.value}</span>
+                  <span className="text-sm text-[var(--text-secondary)]">{s.unit}</span>
                 </p>
-                <p className="mt-1 text-[11px] text-[var(--color-text-subtle)]">
-                  {s.sub}
-                </p>
+                <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">{s.sub}</p>
               </Card>
             ))}
           </div>
 
-          <Card className="p-5">
-            <div className="flex items-center justify-between">
-              <div>
+          <Card className="p-5" delay={0.2}>
+            <div className="flex items-center gap-5">
+              <Ring value={progress} size={92} stroke={9}>
+                <span className="text-xl font-bold tabular-nums">{progress}%</span>
+              </Ring>
+              <div className="flex-1">
                 <p className="text-sm font-semibold">今月の労働時間の進捗</p>
-                <p className="text-xs text-[var(--color-text-muted)]">
+                <p className="text-xs text-[var(--text-secondary)]">
                   2026年5月 ・ 所定 {minutesToHM(monthTarget)}
                 </p>
+                <div className="mt-3 grid grid-cols-3 gap-3 text-center">
+                  <MiniStat label="実労働" value={minutesToHM(sum.totalWork)} />
+                  <MiniStat label="遅刻" value={`${sum.lateCount}回`} />
+                  <MiniStat label="有給取得" value={`${sum.paidLeave}日`} />
+                </div>
               </div>
-              <span className="text-2xl font-bold text-[var(--color-primary)]">
-                {progress}%
-              </span>
-            </div>
-            <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[#60a5fa] transition-all"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <div className="mt-4 grid grid-cols-3 gap-3 text-center">
-              <MiniStat label="実労働" value={minutesToHM(sum.totalWork)} />
-              <MiniStat label="遅刻" value={`${sum.lateCount}回`} />
-              <MiniStat label="有給取得" value={`${sum.paidLeave}日`} />
             </div>
           </Card>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* team status */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2" delay={0.1}>
           <CardHeader
             title="メンバーの勤務状況"
             desc={`出勤中 ${working}名 ・ 休憩中 ${onBreak}名`}
             action={
-              <a
+              <Link
                 href="/members"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-primary)] hover:underline"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--blue)] hover:underline"
               >
                 全員を見る <ArrowUpRight size={14} />
-              </a>
+              </Link>
             }
           />
           <ul className="divide-y">
             {members.slice(0, 6).map((m) => (
               <li
                 key={m.id}
-                className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-[var(--color-surface-muted)]"
+                className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-[var(--surface-2)]"
               >
-                <span
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white"
-                  style={{ background: m.avatarColor }}
-                >
-                  {m.name.charAt(0)}
-                </span>
+                <Avatar name={m.name} color={m.avatarColor} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{m.name}</p>
-                  <p className="truncate text-xs text-[var(--color-text-subtle)]">
+                  <p className="truncate text-xs text-[var(--text-tertiary)]">
                     {m.department} ・ {m.role}
                   </p>
                 </div>
@@ -206,28 +156,26 @@ export default function DashboardPage() {
           </ul>
         </Card>
 
-        {/* activity */}
-        <Card>
+        <Card delay={0.15}>
           <CardHeader title="最近のアクティビティ" desc="本日の打刻・申請ログ" />
           <ul className="space-y-1 p-3">
             {activity.map((a, i) => (
               <li
                 key={i}
-                className="flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-[var(--color-surface-muted)]"
+                className="flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-[var(--surface-2)]"
               >
-                <span className={`mt-0.5 ${a.tone}`}>
+                <span style={{ color: a.tone }} className="mt-0.5">
                   <a.icon size={18} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm">
                     <span className="font-semibold">{a.name}</span>
-                    <span className="text-[var(--color-text-muted)]">
-                      {" "}
-                      さんが{a.action}
+                    <span className="text-[var(--text-secondary)]">
+                      {" "}さんが{a.action}
                     </span>
                   </p>
                 </div>
-                <span className="font-mono text-xs text-[var(--color-text-subtle)]">
+                <span className="font-mono text-xs text-[var(--text-tertiary)]">
                   {a.time}
                 </span>
               </li>
@@ -235,16 +183,16 @@ export default function DashboardPage() {
           </ul>
           {pending > 0 && (
             <div className="border-t px-5 py-3">
-              <a
+              <Link
                 href="/requests"
-                className="flex items-center justify-between rounded-xl bg-[var(--color-warning-soft)] px-4 py-3 text-sm transition-colors hover:brightness-95"
+                className="flex items-center justify-between rounded-xl bg-[var(--orange-soft)] px-4 py-3 text-sm transition-colors hover:brightness-95"
               >
-                <span className="flex items-center gap-2 font-medium text-[var(--color-warning)]">
+                <span className="flex items-center gap-2 font-medium text-[var(--orange)]">
                   <FileCheck2 size={16} />
                   承認待ちの申請が{pending}件あります
                 </span>
-                <ArrowUpRight size={15} className="text-[var(--color-warning)]" />
-              </a>
+                <ArrowUpRight size={15} className="text-[var(--orange)]" />
+              </Link>
             </div>
           )}
         </Card>
@@ -255,8 +203,8 @@ export default function DashboardPage() {
 
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-[var(--color-surface-muted)] py-2.5">
-      <p className="text-[11px] text-[var(--color-text-muted)]">{label}</p>
+    <div className="rounded-xl bg-[var(--surface-3)] py-2">
+      <p className="text-[11px] text-[var(--text-secondary)]">{label}</p>
       <p className="mt-0.5 text-sm font-bold tabular-nums">{value}</p>
     </div>
   );

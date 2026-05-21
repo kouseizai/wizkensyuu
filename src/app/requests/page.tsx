@@ -11,9 +11,15 @@ import {
   Repeat,
   Navigation,
   Inbox,
+  ChevronRight,
+  RotateCcw,
+  Dot,
 } from "lucide-react";
-import { Card, Badge } from "@/components/ui";
-import { leaveRequests, type LeaveRequest } from "@/lib/mock-data";
+import { Card, Badge, Button, Segmented, Avatar, EmptyState, type Tone } from "@/components/ui";
+import { Modal, useToast } from "@/components/Overlay";
+import { Field, Select, Textarea, DatePicker } from "@/components/forms";
+import { useStore, type RequestFull, type ApprovalStep } from "@/lib/store";
+import { currentUser } from "@/lib/mock-data";
 
 const typeIcon: Record<string, React.ComponentType<{ size?: number }>> = {
   有給休暇: CalendarOff,
@@ -23,121 +29,108 @@ const typeIcon: Record<string, React.ComponentType<{ size?: number }>> = {
   直行直帰: Navigation,
 };
 
-const statusTone: Record<string, "warning" | "success" | "danger"> = {
-  承認待ち: "warning",
-  承認済: "success",
-  却下: "danger",
+const statusTone: Record<string, Tone> = {
+  承認待ち: "orange",
+  承認済: "green",
+  却下: "red",
+};
+
+const stepTone: Record<string, string> = {
+  承認済: "var(--green)",
+  承認待ち: "var(--orange)",
+  却下: "var(--red)",
+  差戻し: "var(--orange)",
+  未到達: "var(--text-quaternary)",
 };
 
 export default function RequestsPage() {
+  const { requests, addRequest, decideRequest } = useStore();
+  const { toast } = useToast();
   const [tab, setTab] = useState<"承認待ち" | "承認済" | "却下" | "all">("承認待ち");
-  const [data, setData] = useState<LeaveRequest[]>(leaveRequests);
+  const [formOpen, setFormOpen] = useState(false);
+  const [rejecting, setRejecting] = useState<RequestFull | null>(null);
 
-  const counts = useMemo(() => {
-    return {
-      承認待ち: data.filter((r) => r.status === "承認待ち").length,
-      承認済: data.filter((r) => r.status === "承認済").length,
-      却下: data.filter((r) => r.status === "却下").length,
-      all: data.length,
-    };
-  }, [data]);
-
-  const filtered = useMemo(
-    () => (tab === "all" ? data : data.filter((r) => r.status === tab)),
-    [tab, data]
+  const counts = useMemo(
+    () => ({
+      承認待ち: requests.filter((r) => r.status === "承認待ち").length,
+      承認済: requests.filter((r) => r.status === "承認済").length,
+      却下: requests.filter((r) => r.status === "却下").length,
+      all: requests.length,
+    }),
+    [requests]
   );
 
-  const decide = (id: string, status: "承認済" | "却下") =>
-    setData((d) => d.map((r) => (r.id === id ? { ...r, status } : r)));
-
-  const tabs: { k: typeof tab; l: string }[] = [
-    { k: "承認待ち", l: "承認待ち" },
-    { k: "承認済", l: "承認済" },
-    { k: "却下", l: "却下" },
-    { k: "all", l: "すべて" },
-  ];
+  const filtered = useMemo(
+    () => (tab === "all" ? requests : requests.filter((r) => r.status === tab)),
+    [tab, requests]
+  );
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex rounded-xl border bg-[var(--color-surface)] p-1 text-sm">
-          {tabs.map((t) => (
-            <button
-              key={t.k}
-              onClick={() => setTab(t.k)}
-              className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 font-medium transition-colors ${
-                tab === t.k
-                  ? "bg-[var(--color-primary)] text-white"
-                  : "text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-              }`}
-            >
-              {t.l}
-              <span
-                className={`rounded-full px-1.5 text-[10px] font-bold ${
-                  tab === t.k
-                    ? "bg-white/25"
-                    : "bg-slate-100 text-[var(--color-text-muted)]"
-                }`}
-              >
-                {counts[t.k]}
-              </span>
-            </button>
-          ))}
-        </div>
-        <button className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-primary-hover)]">
+        <Segmented
+          value={tab}
+          onChange={setTab}
+          options={[
+            { value: "承認待ち", label: <>承認待ち<Count n={counts.承認待ち} /></> },
+            { value: "承認済", label: <>承認済<Count n={counts.承認済} /></> },
+            { value: "却下", label: <>却下<Count n={counts.却下} /></> },
+            { value: "all", label: "すべて" },
+          ]}
+        />
+        <Button onClick={() => setFormOpen(true)}>
           <Plus size={17} /> 新規申請
-        </button>
+        </Button>
       </div>
 
       {filtered.length === 0 ? (
-        <Card className="flex flex-col items-center justify-center gap-2 py-16 text-center">
-          <Inbox size={40} className="text-[var(--color-text-subtle)]" />
-          <p className="text-sm font-medium text-[var(--color-text-muted)]">
-            該当する申請はありません
-          </p>
+        <Card>
+          <EmptyState icon={<Inbox size={40} />} title="該当する申請はありません" />
         </Card>
       ) : (
         <div className="grid gap-4">
-          {filtered.map((r) => {
+          {filtered.map((r, i) => {
             const Icon = typeIcon[r.type] ?? Clock;
             return (
-              <Card key={r.id} className="p-5">
+              <Card key={r.id} className="p-5" delay={i * 0.04}>
                 <div className="flex flex-wrap items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--color-primary-soft)] text-[var(--color-primary)]">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--blue-soft)] text-[var(--blue)]">
                     <Icon size={20} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-semibold">{r.type}</span>
-                      <Badge tone={statusTone[r.status]} dot>
-                        {r.status}
-                      </Badge>
+                      <Badge tone={statusTone[r.status]} dot>{r.status}</Badge>
                     </div>
-                    <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-                      {r.detail}
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-[var(--color-text-subtle)]">
+                    <p className="mt-1 text-sm text-[var(--text-secondary)]">{r.detail}</p>
+                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-[var(--text-tertiary)]">
                       <span>申請者：{r.applicant}（{r.department}）</span>
                       <span>対象日：{r.targetDate}</span>
-                      <span>承認者：{r.approver}</span>
                       <span>申請日時：{r.appliedAt}</span>
+                    </div>
+
+                    {/* approval route */}
+                    <div className="mt-4 flex flex-wrap items-center gap-1.5 rounded-xl bg-[var(--surface-2)] p-3">
+                      {r.route.map((step, idx) => (
+                        <RouteStep key={idx} step={step} last={idx === r.route.length - 1} />
+                      ))}
                     </div>
                   </div>
 
                   {r.status === "承認待ち" && (
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => decide(r.id, "却下")}
-                        className="inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-sm font-medium text-[var(--color-danger)] transition-colors hover:bg-[var(--color-danger-soft)]"
-                      >
+                      <Button variant="secondary" onClick={() => setRejecting(r)}>
                         <X size={16} /> 却下
-                      </button>
-                      <button
-                        onClick={() => decide(r.id, "承認済")}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--color-success)] px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:brightness-110"
+                      </Button>
+                      <Button
+                        variant="success"
+                        onClick={() => {
+                          decideRequest(r.id, "承認済");
+                          toast({ kind: "success", title: "申請を承認しました", desc: `${r.applicant}さんの${r.type}` });
+                        }}
                       >
                         <Check size={16} /> 承認
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -146,6 +139,182 @@ export default function RequestsPage() {
           })}
         </div>
       )}
+
+      <RequestForm
+        open={formOpen}
+        onClose={() => setFormOpen(false)}
+        onSubmit={(data) => {
+          addRequest(data);
+          setFormOpen(false);
+          toast({ kind: "success", title: "申請を送信しました", desc: `${data.type}・承認者へ通知しました` });
+        }}
+      />
+
+      <RejectModal
+        request={rejecting}
+        onClose={() => setRejecting(null)}
+        onReject={(id, comment, sendBack) => {
+          decideRequest(id, sendBack ? "差戻し" : "却下", comment);
+          setRejecting(null);
+          toast({ kind: sendBack ? "warning" : "error", title: sendBack ? "申請を差し戻しました" : "申請を却下しました" });
+        }}
+      />
     </div>
+  );
+}
+
+function Count({ n }: { n: number }) {
+  return (
+    <span className="ml-1 rounded-full bg-[var(--surface-3)] px-1.5 text-[10px] font-bold text-[var(--text-secondary)]">
+      {n}
+    </span>
+  );
+}
+
+function RouteStep({ step, last }: { step: ApprovalStep; last: boolean }) {
+  return (
+    <>
+      <div className="flex items-center gap-1.5">
+        <span
+          className="flex h-5 w-5 items-center justify-center rounded-full text-white"
+          style={{ background: stepTone[step.state] }}
+        >
+          {step.state === "承認済" ? <Check size={11} /> : step.state === "却下" ? <X size={11} /> : <Dot size={20} />}
+        </span>
+        <div className="leading-tight">
+          <p className="text-[11px] font-medium">{step.name}</p>
+          <p className="text-[10px] text-[var(--text-tertiary)]">{step.role}</p>
+        </div>
+      </div>
+      {!last && <ChevronRight size={14} className="text-[var(--text-quaternary)]" />}
+    </>
+  );
+}
+
+const TYPES = ["有給休暇", "残業申請", "打刻修正", "振替休日", "直行直帰"] as const;
+
+function RequestForm({
+  open,
+  onClose,
+  onSubmit,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (data: {
+    type: RequestFull["type"];
+    applicant: string;
+    department: string;
+    targetDate: string;
+    detail: string;
+  }) => void;
+}) {
+  const [type, setType] = useState<RequestFull["type"]>("有給休暇");
+  const [date, setDate] = useState<string | null>("2026-05-28");
+  const [detail, setDetail] = useState("");
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="新規申請"
+      desc="申請内容を入力してください。承認経路に沿って通知されます。"
+      footer={
+        <>
+          <Button variant="secondary" onClick={onClose}>キャンセル</Button>
+          <Button
+            disabled={!date || !detail}
+            onClick={() =>
+              date &&
+              onSubmit({
+                type,
+                applicant: currentUser.name,
+                department: currentUser.department,
+                targetDate: date,
+                detail,
+              })
+            }
+          >
+            申請する
+          </Button>
+        </>
+      }
+    >
+      <div className="space-y-4">
+        <Field label="申請種別">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {TYPES.map((t) => {
+              const Icon = typeIcon[t];
+              const active = type === t;
+              return (
+                <button
+                  key={t}
+                  onClick={() => setType(t)}
+                  className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-medium transition-all ${
+                    active
+                      ? "border-[var(--blue)] bg-[var(--blue-soft)] text-[var(--blue)]"
+                      : "hover:bg-[var(--surface-3)]"
+                  }`}
+                >
+                  <Icon size={16} /> {t}
+                </button>
+              );
+            })}
+          </div>
+        </Field>
+        <Field label="対象日">
+          <DatePicker value={date} onChange={setDate} />
+        </Field>
+        <Field label="理由・詳細">
+          <Textarea
+            value={detail}
+            onChange={(e) => setDetail(e.target.value)}
+            placeholder="申請理由を入力してください"
+          />
+        </Field>
+        <div className="flex items-center gap-2 rounded-xl bg-[var(--surface-2)] p-3 text-xs text-[var(--text-secondary)]">
+          <Avatar name="佐藤 花子" color="#db2777" size={28} />
+          承認経路：佐藤 花子（直属上長）→ 伊藤 さやか（部門長）
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function RejectModal({
+  request,
+  onClose,
+  onReject,
+}: {
+  request: RequestFull | null;
+  onClose: () => void;
+  onReject: (id: string, comment: string, sendBack: boolean) => void;
+}) {
+  const [comment, setComment] = useState("");
+  return (
+    <Modal
+      open={!!request}
+      onClose={onClose}
+      title="申請を却下／差し戻し"
+      desc={request ? `${request.applicant}さんの${request.type}` : ""}
+      size="sm"
+      footer={
+        <>
+          <Button variant="secondary" onClick={() => request && onReject(request.id, comment, true)}>
+            <RotateCcw size={15} /> 差し戻す
+          </Button>
+          <Button variant="danger" onClick={() => request && onReject(request.id, comment, false)}>
+            <X size={16} /> 却下する
+          </Button>
+        </>
+      }
+    >
+      <Field label="コメント（申請者に通知されます）">
+        <Textarea
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="却下・差し戻しの理由を入力してください"
+        />
+      </Field>
+    </Modal>
   );
 }

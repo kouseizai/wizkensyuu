@@ -1,85 +1,238 @@
 @import "tailwindcss";
 
-@theme {
-  --color-bg: #f4f6fb;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f8fafc;
-  --color-border: #e5e9f2;
-  --color-text: #1e2a3b;
-  --color-text-muted: #64748b;
-  --color-text-subtle: #94a3b8;
+@custom-variant dark (&:where(.dark, .dark *));
 
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-soft: #eff4ff;
+/* ============ Apple-grade design tokens ============ */
+:root {
+  /* surfaces */
+  --bg: #f5f5f7; /* apple light gray */
+  --bg-elevated: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #fbfbfd;
+  --surface-3: #f5f5f7;
+  --hairline: rgba(0, 0, 0, 0.08);
+  --hairline-strong: rgba(0, 0, 0, 0.14);
 
-  --color-success: #16a34a;
-  --color-success-soft: #ecfdf3;
-  --color-warning: #d97706;
-  --color-warning-soft: #fff7ed;
-  --color-danger: #dc2626;
-  --color-danger-soft: #fef2f2;
-  --color-info: #0891b2;
-  --color-info-soft: #ecfeff;
+  /* text */
+  --text: #1d1d1f; /* apple near-black */
+  --text-secondary: #6e6e73;
+  --text-tertiary: #86868b;
+  --text-quaternary: #aeaeb2;
 
-  --font-sans: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
-    "Meiryo", system-ui, -apple-system, sans-serif;
+  /* accents (Apple system colors) */
+  --blue: #0071e3;
+  --blue-hover: #0077ed;
+  --blue-soft: #e8f1fd;
+  --green: #1d9d4f;
+  --green-soft: #e6f6ec;
+  --orange: #c9690e;
+  --orange-soft: #fdf0e2;
+  --red: #d70015;
+  --red-soft: #fdeaea;
+  --purple: #8944ab;
+  --purple-soft: #f3ebf9;
+  --teal: #007a8a;
+  --teal-soft: #e3f4f6;
+
+  /* glass / vibrancy */
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.5);
+
+  /* shadows — soft, layered, Apple-like */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.06), 0 24px 56px -20px rgba(0, 0, 0, 0.22);
+  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.1), 0 40px 90px -28px rgba(0, 0, 0, 0.34);
+
+  /* motion */
+  --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dark {
+  --bg: #000000;
+  --bg-elevated: #1c1c1e;
+  --surface: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --surface-3: #3a3a3c;
+  --hairline: rgba(255, 255, 255, 0.1);
+  --hairline-strong: rgba(255, 255, 255, 0.18);
+
+  --text: #f5f5f7;
+  --text-secondary: #aeaeb2;
+  --text-tertiary: #8e8e93;
+  --text-quaternary: #636366;
+
+  --blue: #0a84ff;
+  --blue-hover: #409cff;
+  --blue-soft: rgba(10, 132, 255, 0.16);
+  --green: #30d158;
+  --green-soft: rgba(48, 209, 88, 0.16);
+  --orange: #ff9f0a;
+  --orange-soft: rgba(255, 159, 10, 0.16);
+  --red: #ff453a;
+  --red-soft: rgba(255, 69, 58, 0.16);
+  --purple: #bf5af2;
+  --purple-soft: rgba(191, 90, 242, 0.16);
+  --teal: #40c8e0;
+  --teal-soft: rgba(64, 200, 224, 0.16);
+
+  --glass: rgba(30, 30, 32, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5), 0 24px 56px -20px rgba(0, 0, 0, 0.7);
+  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.6), 0 40px 90px -28px rgba(0, 0, 0, 0.8);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-hairline: var(--hairline);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-quaternary: var(--text-quaternary);
+  --color-blue: var(--blue);
+  --color-blue-hover: var(--blue-hover);
+  --color-blue-soft: var(--blue-soft);
+  --color-green: var(--green);
+  --color-green-soft: var(--green-soft);
+  --color-orange: var(--orange);
+  --color-orange-soft: var(--orange-soft);
+  --color-red: var(--red);
+  --color-red-soft: var(--red-soft);
+  --color-purple: var(--purple);
+  --color-purple-soft: var(--purple-soft);
+  --color-teal: var(--teal);
+  --color-teal-soft: var(--teal-soft);
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo",
+    system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", "Menlo", monospace;
+
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 28px;
 }
 
 * {
-  border-color: var(--color-border);
+  border-color: var(--hairline);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 html,
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.011em;
+  transition: background 0.4s var(--ease-out), color 0.4s var(--ease-out);
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  background: color-mix(in srgb, var(--blue) 24%, transparent);
 }
 
+/* scrollbars */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: var(--text-quaternary) transparent;
 }
 *::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: color-mix(in srgb, var(--text-quaternary) 60%, transparent);
   border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+  background-clip: padding-box;
 }
 
-@keyframes fade-in {
+/* utility: frosted glass */
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* number ticking feel */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+@keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-.animate-fade-in {
-  animation: fade-in 0.35s ease both;
+.animate-fade-up {
+  animation: fade-up 0.5s var(--ease-out) both;
 }
 
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-success) 45%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 45%, transparent);
   }
   70% {
-    box-shadow: 0 0 0 14px transparent;
+    box-shadow: 0 0 0 12px transparent;
   }
   100% {
     box-shadow: 0 0 0 0 transparent;
   }
 }
 .animate-pulse-ring {
-  animation: pulse-ring 2s ease-out infinite;
+  animation: pulse-ring 2.4s var(--ease-out) infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-3) 25%,
+    color-mix(in srgb, var(--surface-3) 55%, var(--surface)) 50%,
+    var(--surface-3) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
 }
