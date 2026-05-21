@@ -14,7 +14,7 @@ import {
   AlertTriangle,
   Moon,
 } from "lucide-react";
-import { Card, Badge, Button, Segmented, type Tone } from "@/components/ui";
+import { Card, Badge, Button, Segmented, StatCard, type Tone } from "@/components/ui";
 import { Modal, useToast } from "@/components/Overlay";
 import { Field, Input, Select, inputCls } from "@/components/forms";
 import { useStore } from "@/lib/store";
@@ -70,17 +70,11 @@ export default function AttendancePage() {
   const otRatio = Math.min(100, Math.round((sum.overtime / (45 * 60)) * 100));
 
   const summary = [
-    { icon: CalendarCheck, label: "出勤日数", value: `${sum.workDays}日`, tone: "blue" },
-    { icon: Clock, label: "総労働時間", value: minutesToHM(sum.totalWork), tone: "teal" },
-    { icon: TrendingUp, label: "残業時間", value: minutesToHM(sum.overtime), tone: "orange" },
-    { icon: Coffee, label: "有給取得", value: `${sum.paidLeave}日`, tone: "green" },
+    { icon: CalendarCheck, label: "出勤日数", value: `${sum.workDays}`, unit: "日", trend: [10, 12, 11, 13, 12, 14, 13] },
+    { icon: Clock, label: "総労働時間", value: `${Math.floor(sum.totalWork / 60)}`, unit: "h", sub: `${minutesToHM(sum.totalWork)}`, trend: [120, 132, 128, 140, 136, 145, 138] },
+    { icon: TrendingUp, label: "残業時間", value: `${Math.floor(sum.overtime / 60)}`, unit: "h", sub: `${minutesToHM(sum.overtime)}`, trend: [18, 22, 16, 24, 14, 12, 16] },
+    { icon: Coffee, label: "有給取得", value: `${sum.paidLeave}`, unit: "日", trend: [0, 1, 1, 2, 2, 3, 3] },
   ];
-  const toneBg: Record<string, string> = {
-    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
-    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
-    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
-    green: "bg-[var(--green-soft)] text-[var(--green)]",
-  };
 
   return (
     <div className="space-y-6">
@@ -141,16 +135,8 @@ export default function AttendancePage() {
       </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {summary.map((s) => (
-          <Card key={s.label} className="flex items-center gap-3 p-4">
-            <div className={`flex h-10 w-10 items-center justify-center rounded-[10px] ${toneBg[s.tone]}`}>
-              <s.icon size={18} />
-            </div>
-            <div>
-              <p className="text-xs text-[var(--text-secondary)]">{s.label}</p>
-              <p className="text-lg font-bold tabular-nums">{s.value}</p>
-            </div>
-          </Card>
+        {summary.map((s, i) => (
+          <StatCard key={s.label} {...s} delay={i * 0.04} />
         ))}
       </div>
 

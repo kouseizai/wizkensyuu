@@ -4,46 +4,56 @@
 
 /* ============ Apple-grade design tokens ============ */
 :root {
-  /* surfaces */
-  --bg: #f5f5f7; /* apple light gray */
+  /* surfaces — clean, slightly cool ink-on-paper */
+  --bg: #f3f4f6;
   --bg-elevated: #ffffff;
   --surface: #ffffff;
-  --surface-2: #fbfbfd;
-  --surface-3: #f5f5f7;
-  --hairline: rgba(0, 0, 0, 0.08);
-  --hairline-strong: rgba(0, 0, 0, 0.14);
+  --surface-2: #fafafb;
+  --surface-3: #f1f2f4;
+  --hairline: rgba(13, 18, 28, 0.08);
+  --hairline-strong: rgba(13, 18, 28, 0.16);
 
-  /* text */
-  --text: #1d1d1f; /* apple near-black */
-  --text-secondary: #6e6e73;
-  --text-tertiary: #86868b;
-  --text-quaternary: #aeaeb2;
+  /* text — high-contrast ink */
+  --text: #0c0d10;
+  --text-secondary: #4f535b;
+  --text-tertiary: #82868f;
+  --text-quaternary: #b0b3ba;
 
-  /* accents — calm but alive (muted, not neon) */
-  --blue: #0a6fdb;
-  --blue-hover: #095fbe;
-  --blue-soft: #e7f0fb;
-  --green: #2f9460;
-  --green-soft: #e6f3ec;
-  --orange: #c07a1f;
-  --orange-soft: #fbf1e2;
-  --red: #d1453b;
-  --red-soft: #fcebe9;
-  --purple: #7c5cad;
-  --purple-soft: #f1ebf8;
-  --teal: #2d8a99;
-  --teal-soft: #e3f2f4;
-  --graphite: #1d1d1f;
+  /* single brand accent — deep cobalt (not "tailwind blue") */
+  --accent: #2347e5;
+  --accent-hover: #1b3bcc;
+  --accent-soft: #eceffd;
+  --accent-ink: #1a2b6b;
+
+  /* map legacy blue tokens onto the single accent */
+  --blue: var(--accent);
+  --blue-hover: var(--accent-hover);
+  --blue-soft: var(--accent-soft);
+
+  /* semantic state colors — deeper, never pastel */
+  --green: #15784f;
+  --green-soft: #e7f2ec;
+  --orange: #b25e09;
+  --orange-soft: #fbeede;
+  --red: #c62f30;
+  --red-soft: #fbe9e9;
+  --purple: #6b3fa0;
+  --purple-soft: #f0eaf8;
+  --teal: #0f7888;
+  --teal-soft: #e2f0f2;
+  --graphite: #15161a;
 
   /* glass / vibrancy */
-  --glass: rgba(255, 255, 255, 0.78);
+  --glass: rgba(255, 255, 255, 0.8);
   --glass-border: rgba(255, 255, 255, 0.5);
 
-  /* shadows — very soft, Apple-like */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.03), 0 6px 16px -10px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 2px 8px rgba(0, 0, 0, 0.04), 0 18px 44px -22px rgba(0, 0, 0, 0.16);
-  --shadow-xl: 0 6px 18px rgba(0, 0, 0, 0.07), 0 32px 72px -30px rgba(0, 0, 0, 0.26);
+  /* shadows — Stripe-like layered lift */
+  --shadow-sm: 0 1px 2px rgba(13, 18, 28, 0.06);
+  --shadow-md: 0 1px 3px rgba(13, 18, 28, 0.07), 0 1px 2px rgba(13, 18, 28, 0.05),
+    0 14px 28px -18px rgba(13, 18, 28, 0.16);
+  --shadow-lg: 0 2px 6px rgba(13, 18, 28, 0.06), 0 12px 28px -10px rgba(13, 18, 28, 0.12),
+    0 32px 56px -28px rgba(13, 18, 28, 0.24);
+  --shadow-xl: 0 8px 24px rgba(13, 18, 28, 0.12), 0 40px 80px -32px rgba(13, 18, 28, 0.34);
 
   /* motion */
   --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
@@ -51,33 +61,38 @@
 }
 
 .dark {
-  --bg: #000000;
-  --bg-elevated: #1c1c1e;
-  --surface: #1c1c1e;
-  --surface-2: #2c2c2e;
-  --surface-3: #3a3a3c;
-  --hairline: rgba(255, 255, 255, 0.1);
+  --bg: #0a0a0c;
+  --bg-elevated: #161719;
+  --surface: #16171a;
+  --surface-2: #1d1e22;
+  --surface-3: #292a2f;
+  --hairline: rgba(255, 255, 255, 0.09);
   --hairline-strong: rgba(255, 255, 255, 0.18);
 
-  --text: #f5f5f7;
-  --text-secondary: #aeaeb2;
-  --text-tertiary: #8e8e93;
-  --text-quaternary: #636366;
+  --text: #f4f5f7;
+  --text-secondary: #a4a8b2;
+  --text-tertiary: #797d87;
+  --text-quaternary: #54575f;
 
-  --blue: #4a9eff;
-  --blue-hover: #6cb0ff;
-  --blue-soft: rgba(74, 158, 255, 0.14);
-  --green: #6fb38e;
-  --green-soft: rgba(111, 179, 142, 0.14);
-  --orange: #d2a06a;
-  --orange-soft: rgba(210, 160, 106, 0.14);
-  --red: #e0726a;
-  --red-soft: rgba(224, 114, 106, 0.14);
-  --purple: #a890c2;
-  --purple-soft: rgba(168, 144, 194, 0.14);
-  --teal: #7aafba;
-  --teal-soft: rgba(122, 175, 186, 0.14);
-  --graphite: #2c2c2e;
+  --accent: #5571ff;
+  --accent-hover: #6f87ff;
+  --accent-soft: rgba(85, 113, 255, 0.16);
+  --accent-ink: #c3ccff;
+  --blue: var(--accent);
+  --blue-hover: var(--accent-hover);
+  --blue-soft: var(--accent-soft);
+
+  --green: #45b483;
+  --green-soft: rgba(69, 180, 131, 0.16);
+  --orange: #d68a3a;
+  --orange-soft: rgba(214, 138, 58, 0.16);
+  --red: #e8675f;
+  --red-soft: rgba(232, 103, 95, 0.16);
+  --purple: #a781d6;
+  --purple-soft: rgba(167, 129, 214, 0.16);
+  --teal: #46aab8;
+  --teal-soft: rgba(70, 170, 184, 0.16);
+  --graphite: #1d1e22;
 
   --glass: rgba(30, 30, 32, 0.72);
   --glass-border: rgba(255, 255, 255, 0.08);

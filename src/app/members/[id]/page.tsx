@@ -15,7 +15,7 @@ import {
   TrendingUp,
   Palmtree,
 } from "lucide-react";
-import { Card, CardHeader, Badge, Avatar, Ring, type Tone } from "@/components/ui";
+import { Card, CardHeader, Badge, Avatar, Ring, StatCard, type Tone } from "@/components/ui";
 import { members, memberStats } from "@/lib/mock-data";
 
 const statusTone: Record<string, Tone> = {
@@ -39,17 +39,11 @@ export default function MemberDetailPage({
   const maxTrend = Math.max(...s.trend.map((t) => t.h));
 
   const stats = [
-    { icon: CalendarClock, label: "今月の出勤", value: `${s.workDays}日`, tone: "blue" },
-    { icon: Clock, label: "総労働時間", value: `${s.totalHours}h`, tone: "teal" },
-    { icon: TrendingUp, label: "残業時間", value: `${s.otHours}h`, tone: "orange" },
-    { icon: Palmtree, label: "有給残", value: `${s.paidRemain}日`, tone: "green" },
+    { icon: CalendarClock, label: "今月の出勤", value: `${s.workDays}`, unit: "日" },
+    { icon: Clock, label: "総労働時間", value: `${s.totalHours}`, unit: "h" },
+    { icon: TrendingUp, label: "残業時間", value: `${s.otHours}`, unit: "h" },
+    { icon: Palmtree, label: "有給残", value: `${s.paidRemain}`, unit: "日" },
   ];
-  const toneBg: Record<string, string> = {
-    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
-    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
-    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
-    green: "bg-[var(--green-soft)] text-[var(--green)]",
-  };
 
   return (
     <div className="space-y-6">
@@ -82,13 +76,7 @@ export default function MemberDetailPage({
         <div className="space-y-6 lg:col-span-2">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((st, i) => (
-              <Card key={st.label} className="p-4" delay={i * 0.05}>
-                <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] ${toneBg[st.tone]}`}>
-                  <st.icon size={18} />
-                </div>
-                <p className="text-xs text-[var(--text-secondary)]">{st.label}</p>
-                <p className="mt-1 text-2xl font-bold tabular-nums">{st.value}</p>
-              </Card>
+              <StatCard key={st.label} {...st} delay={i * 0.05} />
             ))}
           </div>
 

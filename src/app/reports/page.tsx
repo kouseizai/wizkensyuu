@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { Clock, TrendingUp, Users, CalendarOff, Download } from "lucide-react";
-import { Card, CardHeader, Avatar } from "@/components/ui";
+import { Card, CardHeader, Avatar, StatCard } from "@/components/ui";
 import { useToast } from "@/components/Overlay";
 import { members } from "@/lib/mock-data";
 
@@ -26,17 +26,11 @@ const maxDeptOt = Math.max(...deptStats.map((d) => d.ot));
 export default function ReportsPage() {
   const { toast } = useToast();
   const kpis = [
-    { icon: Clock, label: "平均労働時間 / 月", value: "159.7h", sub: "前月比 +3.2%", tone: "teal" },
-    { icon: TrendingUp, label: "平均残業時間 / 月", value: "15.3h", sub: "上限 45h", tone: "orange" },
-    { icon: Users, label: "平均出勤率", value: "96.4%", sub: "全社", tone: "green" },
-    { icon: CalendarOff, label: "有給取得率", value: "62.1%", sub: "目標 70%", tone: "blue" },
+    { icon: Clock, label: "平均労働時間 / 月", value: "159.7", unit: "h", sub: "全社平均", delta: { up: true, value: "+3.2%" }, trend: [152, 160, 156, 168, 162, 159] },
+    { icon: TrendingUp, label: "平均残業時間 / 月", value: "15.3", unit: "h", sub: "上限 45h", delta: { up: false, value: "-1.8h" }, trend: [12, 18, 16, 24, 14, 15] },
+    { icon: Users, label: "平均出勤率", value: "96.4", unit: "%", sub: "全社", delta: { up: true, value: "+0.6%" }, trend: [94, 95, 96, 95, 97, 96] },
+    { icon: CalendarOff, label: "有給取得率", value: "62.1", unit: "%", sub: "目標 70%", delta: { up: true, value: "+4.1%" }, trend: [48, 52, 55, 58, 60, 62] },
   ];
-  const toneBg: Record<string, string> = {
-    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
-    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
-    green: "bg-[var(--green-soft)] text-[var(--green)]",
-    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
-  };
 
   return (
     <div className="space-y-6">
@@ -54,14 +48,7 @@ export default function ReportsPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map((k, i) => (
-          <Card key={k.label} className="p-5" delay={i * 0.05} hover>
-            <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] ${toneBg[k.tone]}`}>
-              <k.icon size={18} />
-            </div>
-            <p className="text-xs text-[var(--text-secondary)]">{k.label}</p>
-            <p className="mt-1 text-2xl font-bold tabular-nums">{k.value}</p>
-            <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">{k.sub}</p>
-          </Card>
+          <StatCard key={k.label} {...k} delay={i * 0.05} />
         ))}
       </div>
 

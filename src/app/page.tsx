@@ -14,7 +14,7 @@ import {
   FileCheck2,
 } from "lucide-react";
 import PunchClock from "@/components/PunchClock";
-import { Card, CardHeader, Badge, Avatar, Ring, type Tone } from "@/components/ui";
+import { Card, CardHeader, Badge, Avatar, Ring, StatCard, type Tone } from "@/components/ui";
 import { useStore } from "@/lib/store";
 import { summarize } from "@/lib/mock-data";
 import { minutesToHM } from "@/lib/utils";
@@ -53,18 +53,11 @@ export default function DashboardPage() {
   const pending = requests.filter((r) => r.status === "承認待ち").length;
 
   const stats = [
-    { icon: CalendarCheck, label: "今月の出勤日数", value: `${sum.workDays}`, unit: "日", sub: "予定 22日", tone: "blue" },
-    { icon: Clock, label: "今月の総労働時間", value: `${Math.floor(sum.totalWork / 60)}`, unit: "時間", sub: `残業 ${minutesToHM(sum.overtime)}`, tone: "teal" },
-    { icon: TrendingUp, label: "残業時間", value: `${Math.floor(sum.overtime / 60)}`, unit: "時間", sub: "上限 45時間/月", tone: "orange" },
-    { icon: CalendarDays, label: "有給休暇 残日数", value: "12.5", unit: "日", sub: "付与 20日", tone: "green" },
-  ] as const;
-
-  const toneBg: Record<string, string> = {
-    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
-    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
-    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
-    green: "bg-[var(--green-soft)] text-[var(--green)]",
-  };
+    { icon: CalendarCheck, label: "今月の出勤日数", value: `${sum.workDays}`, unit: "日", sub: "予定 22日", delta: { up: true, value: "+2日" }, trend: [10, 12, 11, 13, 12, 14, 13] },
+    { icon: Clock, label: "総労働時間", value: `${Math.floor(sum.totalWork / 60)}`, unit: "時間", sub: `残業 ${minutesToHM(sum.overtime)}`, trend: [120, 132, 128, 140, 136, 145, 138] },
+    { icon: TrendingUp, label: "残業時間", value: `${Math.floor(sum.overtime / 60)}`, unit: "時間", sub: "上限 45時間/月", delta: { up: false, value: "-3h" }, trend: [18, 22, 16, 24, 14, 12, 16] },
+    { icon: CalendarDays, label: "有給休暇 残日数", value: "12.5", unit: "日", sub: "付与 20日", trend: [20, 18, 17, 16, 15, 14, 12.5] },
+  ];
 
   return (
     <div className="space-y-6">
@@ -87,17 +80,7 @@ export default function DashboardPage() {
         <div className="space-y-6 lg:col-span-2">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((s, i) => (
-              <Card key={s.label} className="p-4" delay={i * 0.05} hover>
-                <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] ${toneBg[s.tone]}`}>
-                  <s.icon size={18} />
-                </div>
-                <p className="text-xs text-[var(--text-secondary)]">{s.label}</p>
-                <p className="mt-1 flex items-baseline gap-1">
-                  <span className="text-2xl font-bold tabular-nums">{s.value}</span>
-                  <span className="text-sm text-[var(--text-secondary)]">{s.unit}</span>
-                </p>
-                <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">{s.sub}</p>
-              </Card>
+              <StatCard key={s.label} {...s} delay={i * 0.05} />
             ))}
           </div>
 

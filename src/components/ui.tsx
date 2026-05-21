@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ---------------- Card ---------------- */
@@ -21,14 +22,88 @@ export function Card({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay, ease: [0.32, 0.72, 0, 1] }}
       className={cn(
-        "rounded-[var(--radius-2xl)] border bg-[var(--surface)] shadow-[var(--shadow-md)]",
-        hover &&
-          "transition-shadow duration-300 hover:shadow-[var(--shadow-lg)]",
+        "rounded-[var(--radius-2xl)] border bg-gradient-to-b from-[var(--surface)] to-[var(--surface-2)] shadow-[var(--shadow-md)]",
+        hover && "transition-shadow duration-300 hover:shadow-[var(--shadow-lg)]",
         className
       )}
     >
       {children}
     </motion.div>
+  );
+}
+
+/* ---------------- Sparkline (micro trend) ---------------- */
+export function Sparkline({
+  data,
+  color = "var(--accent)",
+  className,
+}: {
+  data: number[];
+  color?: string;
+  className?: string;
+}) {
+  const max = Math.max(...data, 1);
+  return (
+    <div className={cn("flex h-7 items-end gap-[3px]", className)}>
+      {data.map((v, i) => (
+        <motion.span
+          key={i}
+          initial={{ height: 0 }}
+          animate={{ height: `${Math.max(8, (v / max) * 100)}%` }}
+          transition={{ duration: 0.5, delay: 0.15 + i * 0.04, ease: [0.32, 0.72, 0, 1] }}
+          className="min-w-[3px] flex-1 rounded-[2px]"
+          style={{ background: color, opacity: i === data.length - 1 ? 1 : 0.3 }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ---------------- StatCard (number-forward, Stripe-style) ---------------- */
+export function StatCard({
+  icon: Icon,
+  label,
+  value,
+  unit,
+  sub,
+  delta,
+  trend,
+  delay = 0,
+}: {
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  label: string;
+  value: string;
+  unit?: string;
+  sub?: string;
+  delta?: { up: boolean; value: string };
+  trend?: number[];
+  delay?: number;
+}) {
+  return (
+    <Card className="p-4" delay={delay} hover>
+      <div className="flex items-center justify-between">
+        <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)]">
+          <Icon size={14} className="text-[var(--text-tertiary)]" />
+          {label}
+        </span>
+        <MoreHorizontal size={15} className="text-[var(--text-quaternary)]" />
+      </div>
+      <div className="mt-3 flex items-baseline gap-1">
+        <span className="text-[28px] font-bold leading-none tracking-tight tabular-nums">
+          {value}
+        </span>
+        {unit && <span className="text-sm font-medium text-[var(--text-secondary)]">{unit}</span>}
+      </div>
+      <div className="mt-2 flex items-center gap-2 text-[11px]">
+        {sub && <span className="text-[var(--text-tertiary)]">{sub}</span>}
+        {delta && (
+          <span className={delta.up ? "text-[var(--green)]" : "text-[var(--red)]"}>
+            {delta.up ? "↑" : "↓"} {delta.value}
+          </span>
+        )}
+      </div>
+      {trend && <Sparkline data={trend} className="mt-3" />}
+    </Card>
   );
 }
 
