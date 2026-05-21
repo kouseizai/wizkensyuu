@@ -19,28 +19,27 @@
   --text-tertiary: #82868f;
   --text-quaternary: #b0b3ba;
 
-  /* single brand accent — deep cobalt (not "tailwind blue") */
-  --accent: #2347e5;
-  --accent-hover: #1b3bcc;
-  --accent-soft: #eceffd;
-  --accent-ink: #1a2b6b;
+  /* brand accent — rich indigo / blurple (distinctive, premium) */
+  --accent: #4f46e5;
+  --accent-hover: #4339cc;
+  --accent-soft: #ebeafe;
+  --accent-ink: #312c8c;
 
-  /* map legacy blue tokens onto the single accent */
-  --blue: var(--accent);
-  --blue-hover: var(--accent-hover);
-  --blue-soft: var(--accent-soft);
+  --blue: #2f6fe4;
+  --blue-hover: #245fcc;
+  --blue-soft: #e6effc;
 
-  /* semantic state colors — deeper, never pastel */
-  --green: #15784f;
-  --green-soft: #e7f2ec;
-  --orange: #b25e09;
-  --orange-soft: #fbeede;
-  --red: #c62f30;
-  --red-soft: #fbe9e9;
-  --purple: #6b3fa0;
-  --purple-soft: #f0eaf8;
-  --teal: #0f7888;
-  --teal-soft: #e2f0f2;
+  /* curated, saturated-but-refined palette */
+  --green: #138a59;
+  --green-soft: #e2f3ea;
+  --orange: #c2740f;
+  --orange-soft: #fbf0df;
+  --red: #d63a3a;
+  --red-soft: #fcebeb;
+  --purple: #8047d6;
+  --purple-soft: #f1e9fb;
+  --teal: #0e8f9e;
+  --teal-soft: #ddf0f2;
   --graphite: #15161a;
 
   /* glass / vibrancy */
@@ -74,24 +73,24 @@
   --text-tertiary: #797d87;
   --text-quaternary: #54575f;
 
-  --accent: #5571ff;
-  --accent-hover: #6f87ff;
-  --accent-soft: rgba(85, 113, 255, 0.16);
-  --accent-ink: #c3ccff;
-  --blue: var(--accent);
-  --blue-hover: var(--accent-hover);
-  --blue-soft: var(--accent-soft);
+  --accent: #7b78ff;
+  --accent-hover: #908dff;
+  --accent-soft: rgba(123, 120, 255, 0.18);
+  --accent-ink: #c9c7ff;
+  --blue: #5b94f0;
+  --blue-hover: #76a6f3;
+  --blue-soft: rgba(91, 148, 240, 0.18);
 
-  --green: #45b483;
-  --green-soft: rgba(69, 180, 131, 0.16);
-  --orange: #d68a3a;
-  --orange-soft: rgba(214, 138, 58, 0.16);
-  --red: #e8675f;
-  --red-soft: rgba(232, 103, 95, 0.16);
-  --purple: #a781d6;
-  --purple-soft: rgba(167, 129, 214, 0.16);
-  --teal: #46aab8;
-  --teal-soft: rgba(70, 170, 184, 0.16);
+  --green: #3cbd86;
+  --green-soft: rgba(60, 189, 134, 0.18);
+  --orange: #e0974a;
+  --orange-soft: rgba(224, 151, 74, 0.18);
+  --red: #ec6a64;
+  --red-soft: rgba(236, 106, 100, 0.18);
+  --purple: #b385ec;
+  --purple-soft: rgba(179, 133, 236, 0.18);
+  --teal: #3fb4c2;
+  --teal-soft: rgba(63, 180, 194, 0.18);
   --graphite: #1d1e22;
 
   --glass: rgba(30, 30, 32, 0.72);

@@ -53,10 +53,10 @@ export default function DashboardPage() {
   const pending = requests.filter((r) => r.status === "承認待ち").length;
 
   const stats = [
-    { icon: CalendarCheck, label: "今月の出勤日数", value: `${sum.workDays}`, unit: "日", sub: "予定 22日", delta: { up: true, value: "+2日" }, trend: [10, 12, 11, 13, 12, 14, 13] },
-    { icon: Clock, label: "総労働時間", value: `${Math.floor(sum.totalWork / 60)}`, unit: "時間", sub: `残業 ${minutesToHM(sum.overtime)}`, trend: [120, 132, 128, 140, 136, 145, 138] },
-    { icon: TrendingUp, label: "残業時間", value: `${Math.floor(sum.overtime / 60)}`, unit: "時間", sub: "上限 45時間/月", delta: { up: false, value: "-3h" }, trend: [18, 22, 16, 24, 14, 12, 16] },
-    { icon: CalendarDays, label: "有給休暇 残日数", value: "12.5", unit: "日", sub: "付与 20日", trend: [20, 18, 17, 16, 15, 14, 12.5] },
+    { icon: CalendarCheck, label: "今月の出勤日数", value: `${sum.workDays}`, unit: "日", sub: "予定 22日", delta: { up: true, value: "+2日" }, trend: [10, 12, 11, 13, 12, 14, 13], tone: "indigo" as const },
+    { icon: Clock, label: "総労働時間", value: `${Math.floor(sum.totalWork / 60)}`, unit: "時間", sub: `残業 ${minutesToHM(sum.overtime)}`, trend: [120, 132, 128, 140, 136, 145, 138], tone: "teal" as const },
+    { icon: TrendingUp, label: "残業時間", value: `${Math.floor(sum.overtime / 60)}`, unit: "時間", sub: "上限 45時間/月", delta: { up: false, value: "-3h" }, trend: [18, 22, 16, 24, 14, 12, 16], tone: "orange" as const },
+    { icon: CalendarDays, label: "有給休暇 残日数", value: "12.5", unit: "日", sub: "付与 20日", trend: [20, 18, 17, 16, 15, 14, 12.5], tone: "green" as const },
   ];
 
   return (

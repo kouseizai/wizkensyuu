@@ -68,7 +68,13 @@ export default function PunchClock() {
   };
 
   return (
-    <div className="overflow-hidden rounded-[var(--radius-2xl)] bg-gradient-to-b from-[#2a2a2d] to-[#161618] p-6 text-white shadow-[var(--shadow-lg)] ring-1 ring-white/5">
+    <div
+      className="overflow-hidden rounded-[var(--radius-2xl)] p-6 text-white shadow-[0_20px_44px_-20px_rgba(79,70,229,0.6)]"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 82% 0%, rgba(255,255,255,0.2), transparent 42%), radial-gradient(circle at 0% 100%, rgba(167,139,250,0.35), transparent 52%), linear-gradient(135deg, #312c8f 0%, #4f46e5 55%, #6d5ce8 100%)",
+      }}
+    >
       <div className="flex items-center justify-between">
         <motion.span
           layout
@@ -119,7 +125,7 @@ export default function PunchClock() {
             whileTap={{ scale: 0.97 }}
             onClick={() => punch("clock_in")}
             disabled={status === "done" || !hydrated}
-            className="col-span-2 flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-base font-bold text-[var(--blue)] shadow-sm transition-transform disabled:cursor-not-allowed disabled:opacity-50"
+            className="col-span-2 flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-base font-bold text-[var(--accent)] shadow-sm transition-transform disabled:cursor-not-allowed disabled:opacity-50"
           >
             <LogIn size={20} /> 出勤
           </motion.button>
@@ -136,7 +142,7 @@ export default function PunchClock() {
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={() => punch("clock_out")}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-base font-bold text-[var(--blue)]"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-base font-bold text-[var(--accent)]"
             >
               <LogOut size={19} /> 退勤
             </motion.button>

@@ -70,10 +70,10 @@ export default function AttendancePage() {
   const otRatio = Math.min(100, Math.round((sum.overtime / (45 * 60)) * 100));
 
   const summary = [
-    { icon: CalendarCheck, label: "出勤日数", value: `${sum.workDays}`, unit: "日", trend: [10, 12, 11, 13, 12, 14, 13] },
-    { icon: Clock, label: "総労働時間", value: `${Math.floor(sum.totalWork / 60)}`, unit: "h", sub: `${minutesToHM(sum.totalWork)}`, trend: [120, 132, 128, 140, 136, 145, 138] },
-    { icon: TrendingUp, label: "残業時間", value: `${Math.floor(sum.overtime / 60)}`, unit: "h", sub: `${minutesToHM(sum.overtime)}`, trend: [18, 22, 16, 24, 14, 12, 16] },
-    { icon: Coffee, label: "有給取得", value: `${sum.paidLeave}`, unit: "日", trend: [0, 1, 1, 2, 2, 3, 3] },
+    { icon: CalendarCheck, label: "出勤日数", value: `${sum.workDays}`, unit: "日", trend: [10, 12, 11, 13, 12, 14, 13], tone: "indigo" as const },
+    { icon: Clock, label: "総労働時間", value: `${Math.floor(sum.totalWork / 60)}`, unit: "h", sub: `${minutesToHM(sum.totalWork)}`, trend: [120, 132, 128, 140, 136, 145, 138], tone: "teal" as const },
+    { icon: TrendingUp, label: "残業時間", value: `${Math.floor(sum.overtime / 60)}`, unit: "h", sub: `${minutesToHM(sum.overtime)}`, trend: [18, 22, 16, 24, 14, 12, 16], tone: "orange" as const },
+    { icon: Coffee, label: "有給取得", value: `${sum.paidLeave}`, unit: "日", trend: [0, 1, 1, 2, 2, 3, 3], tone: "green" as const },
   ];
 
   return (

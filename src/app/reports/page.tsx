@@ -26,10 +26,10 @@ const maxDeptOt = Math.max(...deptStats.map((d) => d.ot));
 export default function ReportsPage() {
   const { toast } = useToast();
   const kpis = [
-    { icon: Clock, label: "平均労働時間 / 月", value: "159.7", unit: "h", sub: "全社平均", delta: { up: true, value: "+3.2%" }, trend: [152, 160, 156, 168, 162, 159] },
-    { icon: TrendingUp, label: "平均残業時間 / 月", value: "15.3", unit: "h", sub: "上限 45h", delta: { up: false, value: "-1.8h" }, trend: [12, 18, 16, 24, 14, 15] },
-    { icon: Users, label: "平均出勤率", value: "96.4", unit: "%", sub: "全社", delta: { up: true, value: "+0.6%" }, trend: [94, 95, 96, 95, 97, 96] },
-    { icon: CalendarOff, label: "有給取得率", value: "62.1", unit: "%", sub: "目標 70%", delta: { up: true, value: "+4.1%" }, trend: [48, 52, 55, 58, 60, 62] },
+    { icon: Clock, label: "平均労働時間 / 月", value: "159.7", unit: "h", sub: "全社平均", delta: { up: true, value: "+3.2%" }, trend: [152, 160, 156, 168, 162, 159], tone: "teal" as const },
+    { icon: TrendingUp, label: "平均残業時間 / 月", value: "15.3", unit: "h", sub: "上限 45h", delta: { up: false, value: "-1.8h" }, trend: [12, 18, 16, 24, 14, 15], tone: "orange" as const },
+    { icon: Users, label: "平均出勤率", value: "96.4", unit: "%", sub: "全社", delta: { up: true, value: "+0.6%" }, trend: [94, 95, 96, 95, 97, 96], tone: "green" as const },
+    { icon: CalendarOff, label: "有給取得率", value: "62.1", unit: "%", sub: "目標 70%", delta: { up: true, value: "+4.1%" }, trend: [48, 52, 55, 58, 60, 62], tone: "indigo" as const },
   ];
 
   return (

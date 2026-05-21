@@ -59,7 +59,16 @@ export function Sparkline({
   );
 }
 
-/* ---------------- StatCard (number-forward, Stripe-style) ---------------- */
+/* ---------------- StatCard (number-forward, colorful + crafted) ---------------- */
+const statTones: Record<string, { tile: string; ink: string; spark: string }> = {
+  indigo: { tile: "bg-[var(--accent-soft)]", ink: "text-[var(--accent)]", spark: "var(--accent)" },
+  blue: { tile: "bg-[var(--blue-soft)]", ink: "text-[var(--blue)]", spark: "var(--blue)" },
+  teal: { tile: "bg-[var(--teal-soft)]", ink: "text-[var(--teal)]", spark: "var(--teal)" },
+  orange: { tile: "bg-[var(--orange-soft)]", ink: "text-[var(--orange)]", spark: "var(--orange)" },
+  green: { tile: "bg-[var(--green-soft)]", ink: "text-[var(--green)]", spark: "var(--green)" },
+  purple: { tile: "bg-[var(--purple-soft)]", ink: "text-[var(--purple)]", spark: "var(--purple)" },
+};
+
 export function StatCard({
   icon: Icon,
   label,
@@ -68,6 +77,7 @@ export function StatCard({
   sub,
   delta,
   trend,
+  tone = "indigo",
   delay = 0,
 }: {
   icon: React.ComponentType<{ size?: number; className?: string }>;
@@ -77,32 +87,36 @@ export function StatCard({
   sub?: string;
   delta?: { up: boolean; value: string };
   trend?: number[];
+  tone?: keyof typeof statTones;
   delay?: number;
 }) {
+  const t = statTones[tone];
   return (
     <Card className="p-4" delay={delay} hover>
       <div className="flex items-center justify-between">
-        <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)]">
-          <Icon size={14} className="text-[var(--text-tertiary)]" />
-          {label}
-        </span>
+        <div className={cn("flex h-9 w-9 items-center justify-center rounded-[10px]", t.tile, t.ink)}>
+          <Icon size={18} />
+        </div>
         <MoreHorizontal size={15} className="text-[var(--text-quaternary)]" />
       </div>
-      <div className="mt-3 flex items-baseline gap-1">
+      <p className="mt-3 text-xs font-medium text-[var(--text-secondary)]">{label}</p>
+      <div className="mt-1 flex items-baseline gap-1">
         <span className="text-[28px] font-bold leading-none tracking-tight tabular-nums">
           {value}
         </span>
         {unit && <span className="text-sm font-medium text-[var(--text-secondary)]">{unit}</span>}
       </div>
-      <div className="mt-2 flex items-center gap-2 text-[11px]">
-        {sub && <span className="text-[var(--text-tertiary)]">{sub}</span>}
-        {delta && (
-          <span className={delta.up ? "text-[var(--green)]" : "text-[var(--red)]"}>
-            {delta.up ? "↑" : "↓"} {delta.value}
-          </span>
-        )}
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <span className="flex items-center gap-2 text-[11px]">
+          {sub && <span className="text-[var(--text-tertiary)]">{sub}</span>}
+          {delta && (
+            <span className={delta.up ? "text-[var(--green)]" : "text-[var(--red)]"}>
+              {delta.up ? "↑" : "↓"} {delta.value}
+            </span>
+          )}
+        </span>
+        {trend && <Sparkline data={trend} color={t.spark} className="w-20" />}
       </div>
-      {trend && <Sparkline data={trend} className="mt-3" />}
     </Card>
   );
 }

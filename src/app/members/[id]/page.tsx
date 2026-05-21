@@ -39,10 +39,10 @@ export default function MemberDetailPage({
   const maxTrend = Math.max(...s.trend.map((t) => t.h));
 
   const stats = [
-    { icon: CalendarClock, label: "今月の出勤", value: `${s.workDays}`, unit: "日" },
-    { icon: Clock, label: "総労働時間", value: `${s.totalHours}`, unit: "h" },
-    { icon: TrendingUp, label: "残業時間", value: `${s.otHours}`, unit: "h" },
-    { icon: Palmtree, label: "有給残", value: `${s.paidRemain}`, unit: "日" },
+    { icon: CalendarClock, label: "今月の出勤", value: `${s.workDays}`, unit: "日", tone: "indigo" as const, trend: [11, 13, 12, 14, 13, 15, s.workDays] },
+    { icon: Clock, label: "総労働時間", value: `${s.totalHours}`, unit: "h", tone: "teal" as const, trend: s.trend.map((t) => t.h) },
+    { icon: TrendingUp, label: "残業時間", value: `${s.otHours}`, unit: "h", tone: "orange" as const, trend: [8, 14, 10, 18, 12, 9, s.otHours] },
+    { icon: Palmtree, label: "有給残", value: `${s.paidRemain}`, unit: "日", tone: "green" as const, trend: [20, 19, 18, 17, 16, 15, s.paidRemain] },
   ];
 
   return (
