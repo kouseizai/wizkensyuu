@@ -61,7 +61,7 @@ export const currentUser = {
   department: "開発部",
   role: "メンバー",
   employeeNo: "EMP-0102",
-  avatarColor: "#5b6b7c",
+  avatarColor: "#4f74c4",
 };
 
 export const members: Member[] = [
@@ -74,7 +74,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0102",
     email: "yamada@example.com",
     status: "出勤中",
-    avatarColor: "#5b6b7c",
+    avatarColor: "#4f74c4",
     workTypeName: "フルタイム",
   },
   {
@@ -86,7 +86,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0044",
     email: "sato@example.com",
     status: "出勤中",
-    avatarColor: "#7a6678",
+    avatarColor: "#b1607f",
     workTypeName: "フルタイム",
   },
   {
@@ -98,7 +98,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0231",
     email: "suzuki@example.com",
     status: "休憩中",
-    avatarColor: "#4f7a6a",
+    avatarColor: "#3f9a7d",
     workTypeName: "フルタイム",
   },
   {
@@ -110,7 +110,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0310",
     email: "takahashi@example.com",
     status: "休暇",
-    avatarColor: "#7d6a55",
+    avatarColor: "#c08a4a",
     workTypeName: "時短勤務",
   },
   {
@@ -122,7 +122,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0288",
     email: "tanaka@example.com",
     status: "退勤済",
-    avatarColor: "#586a86",
+    avatarColor: "#6d6fc0",
     workTypeName: "フルタイム",
   },
   {
@@ -134,7 +134,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0019",
     email: "ito@example.com",
     status: "出勤中",
-    avatarColor: "#876169",
+    avatarColor: "#c2705f",
     workTypeName: "フルタイム",
   },
   {
@@ -146,7 +146,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0407",
     email: "watanabe@example.com",
     status: "未出勤",
-    avatarColor: "#6a7a80",
+    avatarColor: "#5e9aa8",
     workTypeName: "アルバイト",
   },
   {
@@ -158,7 +158,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0356",
     email: "nakamura@example.com",
     status: "出勤中",
-    avatarColor: "#7b7458",
+    avatarColor: "#9a8246",
     workTypeName: "フルタイム",
   },
 ];

@@ -39,11 +39,17 @@ export default function MemberDetailPage({
   const maxTrend = Math.max(...s.trend.map((t) => t.h));
 
   const stats = [
-    { icon: CalendarClock, label: "今月の出勤", value: `${s.workDays}日` },
-    { icon: Clock, label: "総労働時間", value: `${s.totalHours}h` },
-    { icon: TrendingUp, label: "残業時間", value: `${s.otHours}h` },
-    { icon: Palmtree, label: "有給残", value: `${s.paidRemain}日` },
+    { icon: CalendarClock, label: "今月の出勤", value: `${s.workDays}日`, tone: "blue" },
+    { icon: Clock, label: "総労働時間", value: `${s.totalHours}h`, tone: "teal" },
+    { icon: TrendingUp, label: "残業時間", value: `${s.otHours}h`, tone: "orange" },
+    { icon: Palmtree, label: "有給残", value: `${s.paidRemain}日`, tone: "green" },
   ];
+  const toneBg: Record<string, string> = {
+    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
+    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
+    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
+    green: "bg-[var(--green-soft)] text-[var(--green)]",
+  };
 
   return (
     <div className="space-y-6">
@@ -77,7 +83,7 @@ export default function MemberDetailPage({
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((st, i) => (
               <Card key={st.label} className="p-4" delay={i * 0.05}>
-                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] bg-[var(--surface-3)] text-[var(--text-secondary)]">
+                <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] ${toneBg[st.tone]}`}>
                   <st.icon size={18} />
                 </div>
                 <p className="text-xs text-[var(--text-secondary)]">{st.label}</p>

@@ -70,11 +70,17 @@ export default function AttendancePage() {
   const otRatio = Math.min(100, Math.round((sum.overtime / (45 * 60)) * 100));
 
   const summary = [
-    { icon: CalendarCheck, label: "出勤日数", value: `${sum.workDays}日` },
-    { icon: Clock, label: "総労働時間", value: minutesToHM(sum.totalWork) },
-    { icon: TrendingUp, label: "残業時間", value: minutesToHM(sum.overtime) },
-    { icon: Coffee, label: "有給取得", value: `${sum.paidLeave}日` },
+    { icon: CalendarCheck, label: "出勤日数", value: `${sum.workDays}日`, tone: "blue" },
+    { icon: Clock, label: "総労働時間", value: minutesToHM(sum.totalWork), tone: "teal" },
+    { icon: TrendingUp, label: "残業時間", value: minutesToHM(sum.overtime), tone: "orange" },
+    { icon: Coffee, label: "有給取得", value: `${sum.paidLeave}日`, tone: "green" },
   ];
+  const toneBg: Record<string, string> = {
+    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
+    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
+    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
+    green: "bg-[var(--green-soft)] text-[var(--green)]",
+  };
 
   return (
     <div className="space-y-6">
@@ -137,7 +143,7 @@ export default function AttendancePage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {summary.map((s) => (
           <Card key={s.label} className="flex items-center gap-3 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[var(--surface-3)] text-[var(--text-secondary)]">
+            <div className={`flex h-10 w-10 items-center justify-center rounded-[10px] ${toneBg[s.tone]}`}>
               <s.icon size={18} />
             </div>
             <div>

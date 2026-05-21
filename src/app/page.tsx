@@ -28,12 +28,19 @@ const statusTone: Record<string, Tone> = {
 };
 
 const activity = [
-  { icon: LogIn, name: "佐藤 花子", action: "出勤しました", time: "09:02", tone: "var(--green)" },
-  { icon: Coffee, name: "鈴木 一郎", action: "休憩を開始しました", time: "12:15", tone: "var(--orange)" },
-  { icon: FileCheck2, name: "渡辺 翔", action: "有給休暇を申請しました", time: "14:32", tone: "var(--blue)" },
-  { icon: LogOut, name: "田中 健", action: "退勤しました", time: "18:48", tone: "var(--blue)" },
-  { icon: LogIn, name: "中村 由美", action: "出勤しました", time: "08:51", tone: "var(--green)" },
-];
+  { icon: LogIn, name: "佐藤 花子", action: "出勤しました", time: "09:02", tone: "green" },
+  { icon: Coffee, name: "鈴木 一郎", action: "休憩を開始しました", time: "12:15", tone: "orange" },
+  { icon: FileCheck2, name: "渡辺 翔", action: "有給休暇を申請しました", time: "14:32", tone: "blue" },
+  { icon: LogOut, name: "田中 健", action: "退勤しました", time: "18:48", tone: "teal" },
+  { icon: LogIn, name: "中村 由美", action: "出勤しました", time: "08:51", tone: "green" },
+] as const;
+
+const activityTone: Record<string, string> = {
+  green: "bg-[var(--green-soft)] text-[var(--green)]",
+  orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
+  blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
+  teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
+};
 
 export default function DashboardPage() {
   const { records, members, requests } = useStore();
@@ -51,6 +58,13 @@ export default function DashboardPage() {
     { icon: TrendingUp, label: "残業時間", value: `${Math.floor(sum.overtime / 60)}`, unit: "時間", sub: "上限 45時間/月", tone: "orange" },
     { icon: CalendarDays, label: "有給休暇 残日数", value: "12.5", unit: "日", sub: "付与 20日", tone: "green" },
   ] as const;
+
+  const toneBg: Record<string, string> = {
+    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
+    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
+    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
+    green: "bg-[var(--green-soft)] text-[var(--green)]",
+  };
 
   return (
     <div className="space-y-6">
@@ -74,7 +88,7 @@ export default function DashboardPage() {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((s, i) => (
               <Card key={s.label} className="p-4" delay={i * 0.05} hover>
-                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] bg-[var(--surface-3)] text-[var(--text-secondary)]">
+                <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] ${toneBg[s.tone]}`}>
                   <s.icon size={18} />
                 </div>
                 <p className="text-xs text-[var(--text-secondary)]">{s.label}</p>
@@ -151,7 +165,7 @@ export default function DashboardPage() {
                 key={i}
                 className="flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-[var(--surface-2)]"
               >
-                <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--surface-3)] text-[var(--text-secondary)]">
+                <span className={`mt-0.5 flex h-7 w-7 items-center justify-center rounded-full ${activityTone[a.tone]}`}>
                   <a.icon size={15} />
                 </span>
                 <div className="min-w-0 flex-1">

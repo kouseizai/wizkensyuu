@@ -19,20 +19,20 @@
   --text-tertiary: #86868b;
   --text-quaternary: #aeaeb2;
 
-  /* accents — restrained, desaturated (one blue does most of the work) */
-  --blue: #0068d6;
-  --blue-hover: #0058b8;
-  --blue-soft: #eef3f9;
-  --green: #3f7d62;
-  --green-soft: #eef3f0;
-  --orange: #9a6321;
-  --orange-soft: #f4f0e9;
-  --red: #b23b34;
-  --red-soft: #f6ecec;
-  --purple: #6f5d86;
-  --purple-soft: #f1eef4;
-  --teal: #3d7480;
-  --teal-soft: #ecf1f2;
+  /* accents — calm but alive (muted, not neon) */
+  --blue: #0a6fdb;
+  --blue-hover: #095fbe;
+  --blue-soft: #e7f0fb;
+  --green: #2f9460;
+  --green-soft: #e6f3ec;
+  --orange: #c07a1f;
+  --orange-soft: #fbf1e2;
+  --red: #d1453b;
+  --red-soft: #fcebe9;
+  --purple: #7c5cad;
+  --purple-soft: #f1ebf8;
+  --teal: #2d8a99;
+  --teal-soft: #e3f2f4;
   --graphite: #1d1d1f;
 
   /* glass / vibrancy */

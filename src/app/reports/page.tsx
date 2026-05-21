@@ -26,11 +26,17 @@ const maxDeptOt = Math.max(...deptStats.map((d) => d.ot));
 export default function ReportsPage() {
   const { toast } = useToast();
   const kpis = [
-    { icon: Clock, label: "平均労働時間 / 月", value: "159.7h", sub: "前月比 +3.2%" },
-    { icon: TrendingUp, label: "平均残業時間 / 月", value: "15.3h", sub: "上限 45h" },
-    { icon: Users, label: "平均出勤率", value: "96.4%", sub: "全社" },
-    { icon: CalendarOff, label: "有給取得率", value: "62.1%", sub: "目標 70%" },
+    { icon: Clock, label: "平均労働時間 / 月", value: "159.7h", sub: "前月比 +3.2%", tone: "teal" },
+    { icon: TrendingUp, label: "平均残業時間 / 月", value: "15.3h", sub: "上限 45h", tone: "orange" },
+    { icon: Users, label: "平均出勤率", value: "96.4%", sub: "全社", tone: "green" },
+    { icon: CalendarOff, label: "有給取得率", value: "62.1%", sub: "目標 70%", tone: "blue" },
   ];
+  const toneBg: Record<string, string> = {
+    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
+    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
+    green: "bg-[var(--green-soft)] text-[var(--green)]",
+    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
+  };
 
   return (
     <div className="space-y-6">
@@ -49,7 +55,7 @@ export default function ReportsPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map((k, i) => (
           <Card key={k.label} className="p-5" delay={i * 0.05} hover>
-            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] bg-[var(--surface-3)] text-[var(--text-secondary)]">
+            <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] ${toneBg[k.tone]}`}>
               <k.icon size={18} />
             </div>
             <p className="text-xs text-[var(--text-secondary)]">{k.label}</p>
