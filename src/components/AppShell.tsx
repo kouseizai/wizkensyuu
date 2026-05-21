@@ -19,6 +19,7 @@ import {
   Search,
   Bell,
   ChevronDown,
+  ChevronRight,
   Sun,
   Moon,
   LogOut,
@@ -30,11 +31,12 @@ import {
   CircleCheck,
 } from "lucide-react";
 import { navSections } from "@/lib/nav";
-import { currentUser } from "@/lib/mock-data";
+import { currentUser, members } from "@/lib/mock-data";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Dropdown } from "@/components/Overlay";
 import { Avatar } from "@/components/ui";
+import CommandPalette from "@/components/CommandPalette";
 
 const icons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   LayoutDashboard,
@@ -312,6 +314,7 @@ function MenuItem({
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { loggedIn, hydrated, theme, toggleTheme } = useStore();
@@ -323,14 +326,28 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     if (hydrated && !loggedIn && !bare) router.replace("/login");
   }, [hydrated, loggedIn, bare, router]);
 
+  // ⌘K / Ctrl+K command palette
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
   if (bare) return <>{children}</>;
 
-  const pageTitle =
-    navSections
-      .flatMap((s) => s.items)
-      .find((i) =>
-        i.href === "/" ? pathname === "/" : pathname.startsWith(i.href)
-      )?.label ?? "ダッシュボード";
+  const navItem = navSections
+    .flatMap((s) => s.items)
+    .find((i) => (i.href === "/" ? pathname === "/" : pathname.startsWith(i.href)));
+  const pageTitle = navItem?.label ?? "ダッシュボード";
+
+  // breadcrumb for member detail
+  const memberMatch = pathname.match(/^\/members\/(.+)$/);
+  const detailMember = memberMatch ? members.find((m) => m.id === memberMatch[1]) : null;
 
   return (
     <div className="flex min-h-screen">
@@ -378,21 +395,37 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           >
             <Menu size={20} />
           </button>
-          <h1 className="text-base font-semibold tracking-tight lg:text-lg">
-            {pageTitle}
-          </h1>
+          <div className="flex min-w-0 items-center gap-1.5">
+            {detailMember ? (
+              <h1 className="flex items-center gap-1.5 truncate text-base font-semibold tracking-tight lg:text-lg">
+                <Link href="/members" className="text-[var(--text-tertiary)] transition-colors hover:text-[var(--text)]">
+                  メンバー
+                </Link>
+                <ChevronRight size={16} className="shrink-0 text-[var(--text-quaternary)]" />
+                <span className="truncate">{detailMember.name}</span>
+              </h1>
+            ) : (
+              <h1 className="text-base font-semibold tracking-tight lg:text-lg">{pageTitle}</h1>
+            )}
+          </div>
 
           <div className="ml-auto flex items-center gap-2">
-            <div className="relative hidden md:block">
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-quaternary)]"
-              />
-              <input
-                placeholder="検索"
-                className="h-10 w-48 rounded-full border bg-[var(--surface-2)] pl-9 pr-3 text-sm outline-none transition-all duration-200 placeholder:text-[var(--text-quaternary)] focus:w-60 focus:border-[var(--blue)] focus:bg-[var(--surface)] focus:ring-4 focus:ring-[var(--blue-soft)]"
-              />
-            </div>
+            <button
+              onClick={() => setPaletteOpen(true)}
+              className="hidden h-10 items-center gap-2 rounded-full border bg-[var(--surface-2)] pl-3.5 pr-2 text-sm text-[var(--text-tertiary)] transition-colors hover:bg-[var(--surface-3)] md:flex"
+            >
+              <Search size={15} />
+              <span>検索</span>
+              <kbd className="ml-2 rounded-md border bg-[var(--surface)] px-1.5 py-0.5 text-[10px] font-medium">
+                ⌘K
+              </kbd>
+            </button>
+            <button
+              onClick={() => setPaletteOpen(true)}
+              className="rounded-full border bg-[var(--surface)] p-2.5 text-[var(--text-secondary)] transition-colors hover:text-[var(--blue)] md:hidden"
+            >
+              <Search size={18} />
+            </button>
             <button
               onClick={toggleTheme}
               className="rounded-full border bg-[var(--surface)] p-2.5 text-[var(--text-secondary)] transition-colors hover:text-[var(--blue)]"
@@ -420,6 +453,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </AnimatePresence>
         </main>
       </div>
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   );
 }

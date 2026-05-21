@@ -61,7 +61,7 @@ export const currentUser = {
   department: "開発部",
   role: "メンバー",
   employeeNo: "EMP-0102",
-  avatarColor: "#2563eb",
+  avatarColor: "#5b6b7c",
 };
 
 export const members: Member[] = [
@@ -74,7 +74,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0102",
     email: "yamada@example.com",
     status: "出勤中",
-    avatarColor: "#2563eb",
+    avatarColor: "#5b6b7c",
     workTypeName: "フルタイム",
   },
   {
@@ -86,7 +86,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0044",
     email: "sato@example.com",
     status: "出勤中",
-    avatarColor: "#db2777",
+    avatarColor: "#7a6678",
     workTypeName: "フルタイム",
   },
   {
@@ -98,7 +98,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0231",
     email: "suzuki@example.com",
     status: "休憩中",
-    avatarColor: "#0891b2",
+    avatarColor: "#4f7a6a",
     workTypeName: "フルタイム",
   },
   {
@@ -110,7 +110,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0310",
     email: "takahashi@example.com",
     status: "休暇",
-    avatarColor: "#7c3aed",
+    avatarColor: "#7d6a55",
     workTypeName: "時短勤務",
   },
   {
@@ -122,7 +122,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0288",
     email: "tanaka@example.com",
     status: "退勤済",
-    avatarColor: "#16a34a",
+    avatarColor: "#586a86",
     workTypeName: "フルタイム",
   },
   {
@@ -134,7 +134,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0019",
     email: "ito@example.com",
     status: "出勤中",
-    avatarColor: "#ea580c",
+    avatarColor: "#876169",
     workTypeName: "フルタイム",
   },
   {
@@ -146,7 +146,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0407",
     email: "watanabe@example.com",
     status: "未出勤",
-    avatarColor: "#0d9488",
+    avatarColor: "#6a7a80",
     workTypeName: "アルバイト",
   },
   {
@@ -158,7 +158,7 @@ export const members: Member[] = [
     employeeNo: "EMP-0356",
     email: "nakamura@example.com",
     status: "出勤中",
-    avatarColor: "#9333ea",
+    avatarColor: "#7b7458",
     workTypeName: "フルタイム",
   },
 ];
@@ -365,6 +365,44 @@ export function summarize(records: AttendanceRecord[]) {
   return { workDays, totalWork, overtime, lateCount, earlyCount, paidLeave };
 }
 
+/** メンバーごとの疑似勤怠統計（id から決定的に生成） */
+export function memberStats(id: string) {
+  const idx = Math.max(0, members.findIndex((m) => m.id === id));
+  const seed = idx + 1;
+  const workDays = 14 + (seed * 2) % 6; // 14-19
+  const totalHours = 120 + ((seed * 7) % 5) * 8; // 120-152
+  const otHours = (seed * 5) % 28; // 0-27
+  const paidRemain = [12.5, 8.0, 15.5, 6.0, 10.0, 18.0, 4.5, 13.0][idx % 8];
+  const attendanceRate = 92 + ((seed * 3) % 8); // 92-99
+
+  const baseDays = ["5/21", "5/20", "5/19", "5/16", "5/15"];
+  const recent = baseDays.map((date, i) => {
+    const lateSeed = (seed + i) % 7;
+    const otSeed = (seed + i) % 4;
+    if (i === 0 && idx === 0) {
+      return { date, in: "08:58", out: "勤務中", work: "—", tone: "blue" };
+    }
+    const inMin = 540 + (lateSeed === 0 ? 42 : lateSeed === 3 ? 12 : 0);
+    const outMin = 1080 + (otSeed === 0 ? 195 : otSeed === 1 ? 90 : 0);
+    const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+    const work = outMin - inMin - 60;
+    return {
+      date,
+      in: fmt(inMin),
+      out: fmt(outMin),
+      work: `${Math.floor(work / 60)}:${String(work % 60).padStart(2, "0")}`,
+      tone: lateSeed === 0 ? "orange" : work > 540 ? "orange" : "green",
+    };
+  });
+
+  const trend = ["12月", "1月", "2月", "3月", "4月", "5月"].map((m, i) => ({
+    m,
+    h: 130 + ((seed * (i + 2)) % 50),
+  }));
+
+  return { workDays, totalHours, otHours, paidRemain, attendanceRate, recent, trend };
+}
+
 export const shiftLabels: Record<
   string,
   { bg: string; color: string; start: string | null; end: string | null }
@@ -372,7 +410,7 @@ export const shiftLabels: Record<
   早番: { bg: "#eff4ff", color: "#2563eb", start: "07:00", end: "16:00" },
   日勤: { bg: "#ecfdf3", color: "#16a34a", start: "09:00", end: "18:00" },
   遅番: { bg: "#fff7ed", color: "#d97706", start: "12:00", end: "21:00" },
-  休: { bg: "#f1f5f9", color: "#94a3b8", start: null, end: null },
+  休: { bg: "#e2e8f0", color: "#475569", start: null, end: null },
 };
 
 export function buildWeekShifts(): { dates: { iso: string; label: string }[]; rows: ShiftCell[][] } {

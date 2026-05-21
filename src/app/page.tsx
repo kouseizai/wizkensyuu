@@ -52,28 +52,17 @@ export default function DashboardPage() {
     { icon: CalendarDays, label: "有給休暇 残日数", value: "12.5", unit: "日", sub: "付与 20日", tone: "green" },
   ] as const;
 
-  const toneBg: Record<string, string> = {
-    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
-    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
-    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
-    green: "bg-[var(--green-soft)] text-[var(--green)]",
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm text-[var(--text-secondary)]">
-            こんにちは、山田 太郎さん 👋
-          </p>
-          <p className="text-xl font-bold tracking-tight">
-            本日も一日よろしくお願いします
-          </p>
+          <p className="text-sm text-[var(--text-secondary)]">2026年5月21日（木）</p>
+          <p className="text-2xl font-bold tracking-tight">おはようございます、山田 太郎さん</p>
         </div>
-        <Badge tone="orange" className="gap-2">
-          <AlertTriangle size={14} />
+        <span className="inline-flex items-center gap-2 rounded-full bg-[var(--surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] shadow-[var(--shadow-sm)] ring-1 ring-[var(--hairline)]">
+          <AlertTriangle size={14} className="text-[var(--orange)]" />
           5/19 の退勤打刻が未入力です
-        </Badge>
+        </span>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -85,10 +74,8 @@ export default function DashboardPage() {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((s, i) => (
               <Card key={s.label} className="p-4" delay={i * 0.05} hover>
-                <div
-                  className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${toneBg[s.tone]}`}
-                >
-                  <s.icon size={20} />
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] bg-[var(--surface-3)] text-[var(--text-secondary)]">
+                  <s.icon size={18} />
                 </div>
                 <p className="text-xs text-[var(--text-secondary)]">{s.label}</p>
                 <p className="mt-1 flex items-baseline gap-1">
@@ -164,8 +151,8 @@ export default function DashboardPage() {
                 key={i}
                 className="flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-[var(--surface-2)]"
               >
-                <span style={{ color: a.tone }} className="mt-0.5">
-                  <a.icon size={18} />
+                <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--surface-3)] text-[var(--text-secondary)]">
+                  <a.icon size={15} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm">

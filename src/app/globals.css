@@ -19,30 +19,31 @@
   --text-tertiary: #86868b;
   --text-quaternary: #aeaeb2;
 
-  /* accents (Apple system colors) */
-  --blue: #0071e3;
-  --blue-hover: #0077ed;
-  --blue-soft: #e8f1fd;
-  --green: #1d9d4f;
-  --green-soft: #e6f6ec;
-  --orange: #c9690e;
-  --orange-soft: #fdf0e2;
-  --red: #d70015;
-  --red-soft: #fdeaea;
-  --purple: #8944ab;
-  --purple-soft: #f3ebf9;
-  --teal: #007a8a;
-  --teal-soft: #e3f4f6;
+  /* accents — restrained, desaturated (one blue does most of the work) */
+  --blue: #0068d6;
+  --blue-hover: #0058b8;
+  --blue-soft: #eef3f9;
+  --green: #3f7d62;
+  --green-soft: #eef3f0;
+  --orange: #9a6321;
+  --orange-soft: #f4f0e9;
+  --red: #b23b34;
+  --red-soft: #f6ecec;
+  --purple: #6f5d86;
+  --purple-soft: #f1eef4;
+  --teal: #3d7480;
+  --teal-soft: #ecf1f2;
+  --graphite: #1d1d1f;
 
   /* glass / vibrancy */
-  --glass: rgba(255, 255, 255, 0.72);
+  --glass: rgba(255, 255, 255, 0.78);
   --glass-border: rgba(255, 255, 255, 0.5);
 
-  /* shadows — soft, layered, Apple-like */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.06), 0 24px 56px -20px rgba(0, 0, 0, 0.22);
-  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.1), 0 40px 90px -28px rgba(0, 0, 0, 0.34);
+  /* shadows — very soft, Apple-like */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.03), 0 6px 16px -10px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 2px 8px rgba(0, 0, 0, 0.04), 0 18px 44px -22px rgba(0, 0, 0, 0.16);
+  --shadow-xl: 0 6px 18px rgba(0, 0, 0, 0.07), 0 32px 72px -30px rgba(0, 0, 0, 0.26);
 
   /* motion */
   --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
@@ -63,19 +64,20 @@
   --text-tertiary: #8e8e93;
   --text-quaternary: #636366;
 
-  --blue: #0a84ff;
-  --blue-hover: #409cff;
-  --blue-soft: rgba(10, 132, 255, 0.16);
-  --green: #30d158;
-  --green-soft: rgba(48, 209, 88, 0.16);
-  --orange: #ff9f0a;
-  --orange-soft: rgba(255, 159, 10, 0.16);
-  --red: #ff453a;
-  --red-soft: rgba(255, 69, 58, 0.16);
-  --purple: #bf5af2;
-  --purple-soft: rgba(191, 90, 242, 0.16);
-  --teal: #40c8e0;
-  --teal-soft: rgba(64, 200, 224, 0.16);
+  --blue: #4a9eff;
+  --blue-hover: #6cb0ff;
+  --blue-soft: rgba(74, 158, 255, 0.14);
+  --green: #6fb38e;
+  --green-soft: rgba(111, 179, 142, 0.14);
+  --orange: #d2a06a;
+  --orange-soft: rgba(210, 160, 106, 0.14);
+  --red: #e0726a;
+  --red-soft: rgba(224, 114, 106, 0.14);
+  --purple: #a890c2;
+  --purple-soft: rgba(168, 144, 194, 0.14);
+  --teal: #7aafba;
+  --teal-soft: rgba(122, 175, 186, 0.14);
+  --graphite: #2c2c2e;
 
   --glass: rgba(30, 30, 32, 0.72);
   --glass-border: rgba(255, 255, 255, 0.08);

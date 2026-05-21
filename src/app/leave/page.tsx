@@ -107,17 +107,32 @@ export default function LeavePage() {
           <p className="mt-1 text-xs text-[var(--text-secondary)]">
             年次有給休暇の年5日取得が義務付けられています
           </p>
-          <div className="mt-5 flex items-center justify-center">
-            <Ring value={obligationRatio} size={140} stroke={12} color={obligationRatio >= 100 ? "var(--green)" : "var(--orange)"}>
-              <div className="text-center">
-                <p className="text-3xl font-bold tabular-nums">{obligationUsed}</p>
-                <p className="text-xs text-[var(--text-tertiary)]">/ 5日</p>
-              </div>
-            </Ring>
-          </div>
-          <p className="mt-4 text-center text-xs text-[var(--text-secondary)]">
-            あと <span className="font-bold text-[var(--orange)]">{Math.max(0, 5 - obligationUsed)}日</span> の取得が必要です（期限 2027/3/31）
-          </p>
+          {(() => {
+            const done = obligationUsed >= 5;
+            const remaining = Math.max(0, 5 - obligationUsed);
+            return (
+              <>
+                <div className="mt-5 flex items-center justify-center">
+                  <Ring value={obligationRatio} size={140} stroke={12} color={done ? "var(--green)" : "var(--orange)"}>
+                    <div className="text-center">
+                      <p className="text-3xl font-bold tabular-nums">{obligationUsed}</p>
+                      <p className="text-xs text-[var(--text-tertiary)]">/ 5日</p>
+                    </div>
+                  </Ring>
+                </div>
+                {done ? (
+                  <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs font-medium text-[var(--green)]">
+                    <ShieldAlert size={14} />
+                    取得義務を達成しています（期限 2027/3/31）
+                  </p>
+                ) : (
+                  <p className="mt-4 text-center text-xs text-[var(--text-secondary)]">
+                    あと <span className="font-bold text-[var(--orange)]">{remaining}日</span> の取得が必要です（期限 2027/3/31）
+                  </p>
+                )}
+              </>
+            );
+          })()}
         </Card>
 
         {/* calendar */}

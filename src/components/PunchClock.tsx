@@ -19,10 +19,10 @@ const statusMeta: Record<
   string,
   { text: string; chip: string; dot: string }
 > = {
-  before: { text: "未出勤", chip: "bg-white/15 text-white", dot: "bg-white/60" },
-  working: { text: "勤務中", chip: "bg-emerald-400/25 text-emerald-50", dot: "bg-emerald-300" },
-  break: { text: "休憩中", chip: "bg-amber-400/25 text-amber-50", dot: "bg-amber-300" },
-  done: { text: "退勤済", chip: "bg-sky-400/25 text-sky-50", dot: "bg-sky-200" },
+  before: { text: "未出勤", chip: "bg-white/10 text-white/80", dot: "bg-white/50" },
+  working: { text: "勤務中", chip: "bg-white/12 text-white", dot: "bg-[#6fcf97]" },
+  break: { text: "休憩中", chip: "bg-white/12 text-white", dot: "bg-[#e0b15e]" },
+  done: { text: "退勤済", chip: "bg-white/12 text-white", dot: "bg-[#8fb8e8]" },
 };
 
 const eventLabel: Record<PunchType, string> = {
@@ -68,7 +68,7 @@ export default function PunchClock() {
   };
 
   return (
-    <div className="overflow-hidden rounded-[var(--radius-2xl)] bg-gradient-to-br from-[#0a2a6e] via-[var(--blue)] to-[#3b82f6] p-6 text-white shadow-[0_20px_48px_-20px_rgba(0,113,227,0.7)]">
+    <div className="overflow-hidden rounded-[var(--radius-2xl)] bg-gradient-to-b from-[#2a2a2d] to-[#161618] p-6 text-white shadow-[var(--shadow-lg)] ring-1 ring-white/5">
       <div className="flex items-center justify-between">
         <motion.span
           layout

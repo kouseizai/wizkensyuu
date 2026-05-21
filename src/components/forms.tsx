@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, Calendar } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -55,12 +55,19 @@ export function Textarea(
 
 export function Select({
   children,
+  className,
   ...props
 }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <select {...props} className={cn(inputCls, "appearance-none pr-9", props.className)}>
-      {children}
-    </select>
+    <div className="relative">
+      <select {...props} className={cn(inputCls, "cursor-pointer appearance-none pr-10", className)}>
+        {children}
+      </select>
+      <ChevronDown
+        size={16}
+        className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]"
+      />
+    </div>
   );
 }
 

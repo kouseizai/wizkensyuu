@@ -29,14 +29,19 @@ export default function LoginPage() {
       {/* ambient gradient blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <motion.div
-          animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
+          animate={{ x: [0, 50, 0], y: [0, -40, 0], scale: [1, 1.1, 1] }}
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-[var(--blue)] opacity-20 blur-[120px]"
+          className="absolute -left-24 -top-24 h-96 w-96 rounded-full bg-[var(--blue)] opacity-45 blur-[90px] dark:opacity-35"
         />
         <motion.div
-          animate={{ x: [0, -30, 0], y: [0, 40, 0] }}
+          animate={{ x: [0, -40, 0], y: [0, 50, 0], scale: [1, 1.15, 1] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-40 -right-24 h-[28rem] w-[28rem] rounded-full bg-[var(--purple)] opacity-20 blur-[130px]"
+          className="absolute -bottom-32 -right-16 h-[30rem] w-[30rem] rounded-full bg-[var(--purple)] opacity-40 blur-[100px] dark:opacity-30"
+        />
+        <motion.div
+          animate={{ x: [0, 30, 0], y: [0, 30, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute left-1/2 top-1/3 h-72 w-72 rounded-full bg-[var(--teal)] opacity-25 blur-[100px]"
         />
       </div>
 

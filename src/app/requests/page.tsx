@@ -110,7 +110,10 @@ export default function RequestsPage() {
                     </div>
 
                     {/* approval route */}
-                    <div className="mt-4 flex flex-wrap items-center gap-1.5 rounded-xl bg-[var(--surface-2)] p-3">
+                    <div className="mt-4 inline-flex w-fit max-w-full flex-wrap items-center gap-x-2 gap-y-2 rounded-xl bg-[var(--surface-2)] px-3.5 py-2.5">
+                      <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-quaternary)]">
+                        承認経路
+                      </span>
                       {r.route.map((step, idx) => (
                         <RouteStep key={idx} step={step} last={idx === r.route.length - 1} />
                       ))}
@@ -176,17 +179,28 @@ function RouteStep({ step, last }: { step: ApprovalStep; last: boolean }) {
     <>
       <div className="flex items-center gap-1.5">
         <span
-          className="flex h-5 w-5 items-center justify-center rounded-full text-white"
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white"
           style={{ background: stepTone[step.state] }}
         >
-          {step.state === "承認済" ? <Check size={11} /> : step.state === "却下" ? <X size={11} /> : <Dot size={20} />}
+          {step.state === "承認済" ? (
+            <Check size={11} />
+          ) : step.state === "却下" ? (
+            <X size={11} />
+          ) : step.state === "承認待ち" ? (
+            <Clock size={11} />
+          ) : (
+            <Dot size={20} />
+          )}
         </span>
         <div className="leading-tight">
           <p className="text-[11px] font-medium">{step.name}</p>
-          <p className="text-[10px] text-[var(--text-tertiary)]">{step.role}</p>
+          <p className="text-[10px] text-[var(--text-tertiary)]">
+            {step.role}
+            {step.at ? ` ・ ${step.at.split(" ")[1] ?? step.at}` : ""}
+          </p>
         </div>
       </div>
-      {!last && <ChevronRight size={14} className="text-[var(--text-quaternary)]" />}
+      {!last && <ChevronRight size={14} className="shrink-0 text-[var(--text-quaternary)]" />}
     </>
   );
 }

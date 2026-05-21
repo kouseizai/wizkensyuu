@@ -185,7 +185,10 @@ export default function SettingsPage() {
           </Card>
         )}
 
-        <div className="flex justify-end">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed bg-[var(--surface-2)] px-5 py-4">
+          <p className="text-xs text-[var(--text-secondary)]">
+            変更内容はこのブラウザに自動保存され、再読み込み後も保持されます。
+          </p>
           <Button onClick={() => toast({ kind: "success", title: "設定を保存しました" })}>
             <Save size={17} /> 設定を保存
           </Button>

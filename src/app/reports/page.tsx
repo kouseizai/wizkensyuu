@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { Clock, TrendingUp, Users, CalendarOff, Download } from "lucide-react";
 import { Card, CardHeader, Avatar } from "@/components/ui";
 import { useToast } from "@/components/Overlay";
@@ -25,17 +26,11 @@ const maxDeptOt = Math.max(...deptStats.map((d) => d.ot));
 export default function ReportsPage() {
   const { toast } = useToast();
   const kpis = [
-    { icon: Clock, label: "平均労働時間 / 月", value: "159.7h", sub: "前月比 +3.2%", tone: "teal" },
-    { icon: TrendingUp, label: "平均残業時間 / 月", value: "15.3h", sub: "上限 45h", tone: "orange" },
-    { icon: Users, label: "平均出勤率", value: "96.4%", sub: "全社", tone: "green" },
-    { icon: CalendarOff, label: "有給取得率", value: "62.1%", sub: "目標 70%", tone: "blue" },
+    { icon: Clock, label: "平均労働時間 / 月", value: "159.7h", sub: "前月比 +3.2%" },
+    { icon: TrendingUp, label: "平均残業時間 / 月", value: "15.3h", sub: "上限 45h" },
+    { icon: Users, label: "平均出勤率", value: "96.4%", sub: "全社" },
+    { icon: CalendarOff, label: "有給取得率", value: "62.1%", sub: "目標 70%" },
   ];
-  const toneBg: Record<string, string> = {
-    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
-    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
-    green: "bg-[var(--green-soft)] text-[var(--green)]",
-    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
-  };
 
   return (
     <div className="space-y-6">
@@ -54,8 +49,8 @@ export default function ReportsPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map((k, i) => (
           <Card key={k.label} className="p-5" delay={i * 0.05} hover>
-            <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${toneBg[k.tone]}`}>
-              <k.icon size={20} />
+            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-[10px] bg-[var(--surface-3)] text-[var(--text-secondary)]">
+              <k.icon size={18} />
             </div>
             <p className="text-xs text-[var(--text-secondary)]">{k.label}</p>
             <p className="mt-1 text-2xl font-bold tabular-nums">{k.value}</p>
@@ -66,20 +61,43 @@ export default function ReportsPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2" delay={0.1}>
-          <CardHeader title="月別 労働時間の推移" desc="通常労働（青）＋ 残業（橙）" />
+          <CardHeader
+            title="月別 労働時間の推移"
+            desc="通常労働（青）＋ 残業（橙）"
+            action={
+              <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-sm bg-[var(--blue)]" />通常
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-sm bg-[var(--orange)]" />残業
+                </span>
+              </div>
+            }
+          />
           <div className="p-6">
-            <div className="flex h-56 items-end justify-between gap-4">
-              {monthly.map((d) => {
-                const wh = (d.work / maxWork) * 100;
-                const oh = (d.ot / maxWork) * 100;
+            <div className="flex h-56 items-end justify-between gap-3 sm:gap-5">
+              {monthly.map((d, i) => {
+                const wh = (d.work / maxWork) * 200;
+                const oh = (d.ot / maxWork) * 200;
                 return (
                   <div key={d.m} className="group flex flex-1 flex-col items-center gap-2">
-                    <div className="relative flex w-full flex-1 flex-col justify-end">
-                      <span className="mb-1 text-center text-xs font-semibold tabular-nums text-[var(--text-secondary)] opacity-0 transition-opacity group-hover:opacity-100">
-                        {d.work + d.ot}h
-                      </span>
-                      <div className="w-full rounded-t-md bg-[var(--orange)] transition-all" style={{ height: `${oh}%` }} />
-                      <div className="w-full rounded-b-md bg-[var(--blue)] transition-all group-hover:brightness-110" style={{ height: `${wh}%` }} />
+                    <span className="text-xs font-semibold tabular-nums text-[var(--text-secondary)]">
+                      {d.work + d.ot}h
+                    </span>
+                    <div className="flex w-full max-w-[44px] flex-col justify-end">
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: oh }}
+                        transition={{ duration: 0.6, delay: 0.1 + i * 0.06, ease: [0.32, 0.72, 0, 1] }}
+                        className="w-full rounded-t-lg bg-[var(--orange)]"
+                      />
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: wh }}
+                        transition={{ duration: 0.6, delay: 0.1 + i * 0.06, ease: [0.32, 0.72, 0, 1] }}
+                        className="w-full rounded-b-lg bg-[var(--blue)] transition-[filter] group-hover:brightness-110"
+                      />
                     </div>
                     <span className="text-xs text-[var(--text-secondary)]">{d.m}</span>
                   </div>

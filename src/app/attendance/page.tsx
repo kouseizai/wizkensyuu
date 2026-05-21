@@ -70,17 +70,11 @@ export default function AttendancePage() {
   const otRatio = Math.min(100, Math.round((sum.overtime / (45 * 60)) * 100));
 
   const summary = [
-    { icon: CalendarCheck, label: "出勤日数", value: `${sum.workDays}日`, tone: "blue" },
-    { icon: Clock, label: "総労働時間", value: minutesToHM(sum.totalWork), tone: "teal" },
-    { icon: TrendingUp, label: "残業時間", value: minutesToHM(sum.overtime), tone: "orange" },
-    { icon: Coffee, label: "有給取得", value: `${sum.paidLeave}日`, tone: "green" },
+    { icon: CalendarCheck, label: "出勤日数", value: `${sum.workDays}日` },
+    { icon: Clock, label: "総労働時間", value: minutesToHM(sum.totalWork) },
+    { icon: TrendingUp, label: "残業時間", value: minutesToHM(sum.overtime) },
+    { icon: Coffee, label: "有給取得", value: `${sum.paidLeave}日` },
   ];
-  const toneBg: Record<string, string> = {
-    blue: "bg-[var(--blue-soft)] text-[var(--blue)]",
-    teal: "bg-[var(--teal-soft)] text-[var(--teal)]",
-    orange: "bg-[var(--orange-soft)] text-[var(--orange)]",
-    green: "bg-[var(--green-soft)] text-[var(--green)]",
-  };
 
   return (
     <div className="space-y-6">
@@ -118,8 +112,8 @@ export default function AttendancePage() {
       {/* 36協定 alert */}
       <Card className="overflow-hidden p-0">
         <div className="flex flex-wrap items-center gap-4 p-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--orange-soft)] text-[var(--orange)]">
-            <AlertTriangle size={20} />
+          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[var(--surface-3)] text-[var(--text-secondary)]">
+            <AlertTriangle size={18} />
           </div>
           <div className="min-w-[180px] flex-1">
             <p className="text-sm font-semibold">36協定 残業上限モニタリング</p>
@@ -143,8 +137,8 @@ export default function AttendancePage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {summary.map((s) => (
           <Card key={s.label} className="flex items-center gap-3 p-4">
-            <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${toneBg[s.tone]}`}>
-              <s.icon size={20} />
+            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[var(--surface-3)] text-[var(--text-secondary)]">
+              <s.icon size={18} />
             </div>
             <div>
               <p className="text-xs text-[var(--text-secondary)]">{s.label}</p>
@@ -175,7 +169,7 @@ export default function AttendancePage() {
             {confirmed ? "確定済み" : "月次を確定して申請"}
           </Button>
         </div>
-        <div className="overflow-x-auto">
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[820px] text-sm">
             <thead>
               <tr className="border-b bg-[var(--surface-2)] text-left text-xs text-[var(--text-secondary)]">
@@ -203,7 +197,11 @@ export default function AttendancePage() {
                   <tr
                     key={r.date}
                     className={`border-b transition-colors last:border-0 hover:bg-[var(--surface-2)] ${
-                      r.note === "勤務中" ? "bg-[var(--blue-soft)]/40" : ""
+                      r.note === "勤務中"
+                        ? "bg-[var(--blue-soft)]/40"
+                        : r.status === "holiday" || r.status === "pending"
+                          ? "text-[var(--text-tertiary)]"
+                          : ""
                     }`}
                   >
                     <td className="whitespace-nowrap px-4 py-3">
@@ -248,10 +246,10 @@ export default function AttendancePage() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => setEditing(r)}
-                        className="rounded-lg p-1.5 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--blue-soft)] hover:text-[var(--blue)]"
+                        className="inline-flex items-center gap-1 rounded-lg border bg-[var(--surface)] px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--blue)] hover:bg-[var(--blue-soft)] hover:text-[var(--blue)]"
                         title="打刻を修正"
                       >
-                        <Pencil size={15} />
+                        <Pencil size={13} /> 修正
                       </button>
                     </td>
                   </tr>
@@ -275,6 +273,49 @@ export default function AttendancePage() {
             </tfoot>
           </table>
         </div>
+
+        {/* mobile cards */}
+        <ul className="divide-y md:hidden">
+          {rows.map((r) => {
+            const wm = workMinutes(r.clockIn, r.clockOut, r.breakMin);
+            const ot = wm && wm > 480 ? wm - 480 : 0;
+            const isSat = r.weekday === "土";
+            const isSun = r.weekday === "日";
+            const empty = r.status === "holiday" || r.status === "pending";
+            return (
+              <li key={r.date} className="px-4 py-3.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base font-semibold tabular-nums">{r.day}日</span>
+                    <span
+                      className={`text-xs ${
+                        isSun ? "text-[var(--red)]" : isSat ? "text-[var(--blue)]" : "text-[var(--text-tertiary)]"
+                      }`}
+                    >
+                      ({r.weekday})
+                    </span>
+                    <Badge tone={statusMeta[r.status].tone}>{statusMeta[r.status].label}</Badge>
+                  </div>
+                  <button
+                    onClick={() => setEditing(r)}
+                    className="inline-flex items-center gap-1 rounded-lg border bg-[var(--surface)] px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)]"
+                  >
+                    <Pencil size={13} /> 修正
+                  </button>
+                </div>
+                {!empty && (
+                  <div className="mt-2.5 grid grid-cols-4 gap-2 text-center">
+                    <MobileCell label="出勤" value={r.clockIn ?? "—"} />
+                    <MobileCell label="退勤" value={r.clockOut ?? (r.clockIn ? "勤務中" : "—")} />
+                    <MobileCell label="実労働" value={wm != null && r.clockOut ? minutesToHM(wm, "colon") : "—"} bold />
+                    <MobileCell label="残業" value={ot > 0 ? minutesToHM(ot, "colon") : "—"} accent={ot > 0} />
+                  </div>
+                )}
+                {r.note && <p className="mt-2 text-xs text-[var(--text-tertiary)]">{r.note}</p>}
+              </li>
+            );
+          })}
+        </ul>
       </Card>
 
       <EditModal
@@ -286,6 +327,31 @@ export default function AttendancePage() {
           toast({ kind: "success", title: "打刻を修正しました", desc: `${date} を更新しました` });
         }}
       />
+    </div>
+  );
+}
+
+function MobileCell({
+  label,
+  value,
+  bold,
+  accent,
+}: {
+  label: string;
+  value: string;
+  bold?: boolean;
+  accent?: boolean;
+}) {
+  return (
+    <div className="rounded-lg bg-[var(--surface-2)] py-1.5">
+      <p className="text-[10px] text-[var(--text-tertiary)]">{label}</p>
+      <p
+        className={`font-mono text-xs tabular-nums ${bold ? "font-bold" : ""} ${
+          accent ? "text-[var(--orange)]" : ""
+        }`}
+      >
+        {value}
+      </p>
     </div>
   );
 }
